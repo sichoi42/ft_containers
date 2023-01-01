@@ -18,7 +18,7 @@ class Timer {
 };
 
 template <class Stack>
-std::clock_t get_push_pop_time_stack(std::size_t size, Stack st) {
+std::clock_t get_simple_test_time_stack(std::size_t size, Stack st) {
 	Timer t;
 	t.start();
 	for (std::size_t i = 0; i < size; ++i) {
