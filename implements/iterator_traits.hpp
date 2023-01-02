@@ -32,3 +32,8 @@ namespace ft {
 }
 
 #endif
+
+/*
+	STL Reference
+	https://en.cppreference.com/w/cpp/iterator/iterator_traits
+*/
