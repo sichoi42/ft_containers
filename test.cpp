@@ -44,31 +44,40 @@ bool compare2(const T& a, const T& b) {
 }
 
 int main(){
-	const volatile int a = 1;
-	do_something(a);
-	B b = B();
-	do_something(b);
+	typedef ft::integral_constant<int, 2> two_t;
+	typedef ft::integral_constant<int, 4> four_t;
 
-	std::vector<int> v1;
-	v1.push_back(1);
-	v1.push_back(2);
-	v1.push_back(3);
-	v1.push_back(4);
-	// v1.push_back(5);
-	std::vector<int> v2;
-	v2.push_back(1);
-	v2.push_back(2);
-	v2.push_back(3);
-	v2.push_back(4);
-	v2.push_back(5);
+	std::cout << two_t::value << std::endl;
 
-	std::cout << ft::equal(v1.begin(), v1.end(), v2.begin()) << std::endl;
-	std::cout << ft::equal(v1.begin(), v1.end(), v2.begin(), compare<int>) << std::endl;
+	enum class my_e { e1, e2 };
+	typedef ft::integral_constant<my_e, my_e::e1> my_e_e1;
+	typedef ft::integral_constant<my_e, my_e::e2> my_e_e2;
+	std::cout << (my_e_e1() == my_e::e1) << std::endl;
+	// const volatile int a = 1;
+	// do_something(a);
+	// B b = B();
+	// do_something(b);
 
-	std::cout << std::equal(v1.begin(), v1.end(), v2.begin()) << std::endl;
-	std::cout << std::equal(v1.begin(), v1.end(), v2.begin(), compare<int>) << std::endl;
+	// std::vector<int> v1;
+	// v1.push_back(1);
+	// v1.push_back(2);
+	// v1.push_back(3);
+	// v1.push_back(4);
+	// // v1.push_back(5);
+	// std::vector<int> v2;
+	// v2.push_back(1);
+	// v2.push_back(2);
+	// v2.push_back(3);
+	// v2.push_back(4);
+	// v2.push_back(5);
 
-	std::cout << ft::lexicographical_compare(v1.begin(), v1.end(), v2.begin(), v2.end()) << std::endl;
-	std::cout << ft::lexicographical_compare(v1.begin(), v1.end(), v2.begin(), v2.end(), compare2<int>) << std::endl;
+	// std::cout << ft::equal(v1.begin(), v1.end(), v2.begin()) << std::endl;
+	// std::cout << ft::equal(v1.begin(), v1.end(), v2.begin(), compare<int>) << std::endl;
+
+	// std::cout << std::equal(v1.begin(), v1.end(), v2.begin()) << std::endl;
+	// std::cout << std::equal(v1.begin(), v1.end(), v2.begin(), compare<int>) << std::endl;
+
+	// std::cout << ft::lexicographical_compare(v1.begin(), v1.end(), v2.begin(), v2.end()) << std::endl;
+	// std::cout << ft::lexicographical_compare(v1.begin(), v1.end(), v2.begin(), v2.end(), compare2<int>) << std::endl;
 	return 0;
 }
