@@ -15,6 +15,7 @@
 
 #include <type_traits>
 #include <algorithm>
+#include <memory>
 
 template <typename T>
 typename ft::enable_if<ft::is_integral<T>::value>::type
@@ -44,15 +45,17 @@ bool compare2(const T& a, const T& b) {
 }
 
 int main(){
-	typedef ft::integral_constant<int, 2> two_t;
-	typedef ft::integral_constant<int, 4> four_t;
+	// typedef ft::integral_constant<int, 2> two_t;
+	// typedef ft::integral_constant<int, 4> four_t;
 
-	std::cout << two_t::value << std::endl;
+	// std::cout << two_t::value << std::endl;
 
-	enum class my_e { e1, e2 };
-	typedef ft::integral_constant<my_e, my_e::e1> my_e_e1;
-	typedef ft::integral_constant<my_e, my_e::e2> my_e_e2;
-	std::cout << (my_e_e1() == my_e::e1) << std::endl;
+	// enum class my_e { e1, e2 };
+	// typedef ft::integral_constant<my_e, my_e::e1> my_e_e1;
+	// typedef ft::integral_constant<my_e, my_e::e2> my_e_e2;
+	// std::cout << (my_e_e1() == my_e::e1) << std::endl;
+
+
 	// const volatile int a = 1;
 	// do_something(a);
 	// B b = B();
@@ -79,5 +82,31 @@ int main(){
 
 	// std::cout << ft::lexicographical_compare(v1.begin(), v1.end(), v2.begin(), v2.end()) << std::endl;
 	// std::cout << ft::lexicographical_compare(v1.begin(), v1.end(), v2.begin(), v2.end(), compare2<int>) << std::endl;
+
+	{
+		std::allocator<int> alloc;
+
+		std::cout << std::is_same_v<int, decltype(alloc)::value_type> << std::endl;
+		int *p = alloc.allocate(1);
+		alloc.deallocate(p, 1);
+
+		using traits_t = std::allocator_traits<decltype(alloc)>;
+		p = traits_t::allocate(alloc, 1);
+		traits_t::construct(alloc, p, 7);
+		std::cout << *p << std::endl;
+		traits_t::deallocate(alloc, p, 1);
+	}
+	{
+		std::allocator<std::string> alloc;
+		using traits_t = std::allocator_traits<decltype(alloc)>;
+		traits_t::rebind_alloc<std::string> alloc_ = alloc;
+		std::string *p = traits_t::allocate(alloc, 2);
+		traits_t::construct(alloc, p, "foo");
+		traits_t::construct(alloc, p + 1, "bar");
+		std::cout << p[0] << ' ' << p[1] << std::endl;
+		traits_t::destroy(alloc, p + 1);
+		traits_t::destroy(alloc, p);
+		traits_t::deallocate(alloc, p, 2);
+	}
 	return 0;
 }
