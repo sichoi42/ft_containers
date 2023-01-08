@@ -83,30 +83,99 @@ int main(){
 	// std::cout << ft::lexicographical_compare(v1.begin(), v1.end(), v2.begin(), v2.end()) << std::endl;
 	// std::cout << ft::lexicographical_compare(v1.begin(), v1.end(), v2.begin(), v2.end(), compare2<int>) << std::endl;
 
-	{
-		std::allocator<int> alloc;
+	// {
+	// 	std::allocator<int> alloc;
 
-		std::cout << std::is_same_v<int, decltype(alloc)::value_type> << std::endl;
-		int *p = alloc.allocate(1);
-		alloc.deallocate(p, 1);
+	// 	std::cout << std::is_same_v<int, decltype(alloc)::value_type> << std::endl;
+	// 	int *p = alloc.allocate(1);
+	// 	alloc.deallocate(p, 1);
 
-		using traits_t = std::allocator_traits<decltype(alloc)>;
-		p = traits_t::allocate(alloc, 1);
-		traits_t::construct(alloc, p, 7);
-		std::cout << *p << std::endl;
-		traits_t::deallocate(alloc, p, 1);
-	}
-	{
-		std::allocator<std::string> alloc;
-		using traits_t = std::allocator_traits<decltype(alloc)>;
-		traits_t::rebind_alloc<std::string> alloc_ = alloc;
-		std::string *p = traits_t::allocate(alloc, 2);
-		traits_t::construct(alloc, p, "foo");
-		traits_t::construct(alloc, p + 1, "bar");
-		std::cout << p[0] << ' ' << p[1] << std::endl;
-		traits_t::destroy(alloc, p + 1);
-		traits_t::destroy(alloc, p);
-		traits_t::deallocate(alloc, p, 2);
-	}
+	// 	using traits_t = std::allocator_traits<decltype(alloc)>;
+	// 	p = traits_t::allocate(alloc, 1);
+	// 	traits_t::construct(alloc, p, 7);
+	// 	std::cout << *p << std::endl;
+	// 	traits_t::deallocate(alloc, p, 1);
+	// }
+	// {
+	// 	std::allocator<std::string> alloc;
+	// 	using traits_t = std::allocator_traits<decltype(alloc)>;
+	// 	traits_t::rebind_alloc<std::string> alloc_ = alloc;
+	// 	std::string *p = traits_t::allocate(alloc, 2);
+	// 	traits_t::construct(alloc, p, "foo");
+	// 	traits_t::construct(alloc, p + 1, "bar");
+	// 	std::cout << p[0] << ' ' << p[1] << std::endl;
+	// 	traits_t::destroy(alloc, p + 1);
+	// 	traits_t::destroy(alloc, p);
+	// 	traits_t::deallocate(alloc, p, 2);
+	// }
+
+	// int prev = 0, cur;
+	// std::vector<int> v;
+	// std::cout << "capacity: " << v.capacity() << std::endl;
+	// for (size_t i = 0; i < (1 << 19) + 1; i++)
+	// {
+	// 	v.push_back(i);
+	// 	cur = v.capacity();
+	// 	if (cur != prev)
+	// 	{
+	// 		std::cout << "capacity: " << cur << std::endl;
+	// 		prev = cur;
+	// 	}
+	// }
+
+	// std::vector<int> v(5, 5);
+	// std::cout << "size: " << v.size() << std::endl;
+	// std::cout << "capacity: " << v.capacity() << std::endl;
+	// for (size_t i = 0; i < v.size(); i++) {
+	// 	std::cout << v[i] << std::endl;
+	// }
+	// std::cout << "------------" << std::endl;
+	// v.resize(3);
+	// std::cout << "size: " << v.size() << std::endl;
+	// std::cout << "capacity: " << v.capacity() << std::endl;
+	// for (size_t i = 0; i < v.size(); i++) {
+	// 	std::cout << v[i] << std::endl;
+	// }
+
+	// int n = 7;
+
+	// std::vector<int> v(n, 5);
+	// std::cout << "size: " << v.size() << std::endl;
+	// std::cout << "capacity: " << v.capacity() << std::endl;
+	// for (size_t i = 0; i < v.size(); i++) {
+	// 	std::cout << v[i] << std::endl;
+	// }
+	// std::cout << "------------" << std::endl;
+	// std::cout << v[10] << std::endl;
+
+	std::vector<int> v2;
+	v2.pop_back();
+	std::cout << v2.size() << std::endl;
+	// for (size_t i = 0; i < n; i++)
+	// {
+	// 	v2.push_back(5);
+	// 	std::cout << "size: " << v2.size() << std::endl;
+	// 	std::cout << "capacity: " << v2.capacity() << std::endl;
+	// 	for (size_t i = 0; i < v2.size(); i++) {
+	// 		std::cout << v2[i] << std::endl;
+	// 	}
+	// }
+
+	// std::vector<int> v2(v);
+	// v2.assign(v.begin(), v.end());
+	// std::cout << "size: " << v2.size() << std::endl;
+	// std::cout << "capacity: " << v2.capacity() << std::endl;
+	// for (size_t i = 0; i < v2.size(); i++) {
+	// 	std::cout << v2[i] << std::endl;
+	// }
+
+	// std::vector<int> v3(v);
+	// v3.resize(7, 3);
+	// std::cout << "size: " << v3.size() << std::endl;
+	// std::cout << "capacity: " << v3.capacity() << std::endl;
+	// for (size_t i = 0; i < v3.size(); i++) {
+	// 	std::cout << v3[i] << std::endl;
+	// }
+
 	return 0;
 }
