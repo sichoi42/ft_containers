@@ -148,34 +148,40 @@ int main(){
 	// std::cout << "------------" << std::endl;
 	// std::cout << v[10] << std::endl;
 
-	std::vector<int> v2;
-	v2.pop_back();
-	std::cout << v2.size() << std::endl;
-	// for (size_t i = 0; i < n; i++)
-	// {
-	// 	v2.push_back(5);
-	// 	std::cout << "size: " << v2.size() << std::endl;
-	// 	std::cout << "capacity: " << v2.capacity() << std::endl;
-	// 	for (size_t i = 0; i < v2.size(); i++) {
-	// 		std::cout << v2[i] << std::endl;
-	// 	}
+	// std::vector<int> anothervector = { 1, 2, 3, 4, 5 };
+	// std::vector<int>::iterator it;
+
+	// it = anothervector.begin();
+	// std::cout << "size: " << anothervector.size() << std::endl;
+	// std::cout << "capacity: " << anothervector.capacity() << std::endl;
+	// for (size_t i = 0; i < anothervector.size(); i++) {
+	// 	std::cout << anothervector[i] << std::endl;
 	// }
 
-	// std::vector<int> v2(v);
-	// v2.assign(v.begin(), v.end());
-	// std::cout << "size: " << v2.size() << std::endl;
-	// std::cout << "capacity: " << v2.capacity() << std::endl;
-	// for (size_t i = 0; i < v2.size(); i++) {
-	// 	std::cout << v2[i] << std::endl;
-	// }
+	std::vector<int> myvector = { 1, 2, 3, 4, 5 };
+	std::vector<int>::iterator it2;
+	it2 = myvector.begin();
+	myvector.erase(it2 + 1, it2 + 3);
+	// myvector.insert(it2 + 1, anothervector.begin(), anothervector.end());
+	std::cout << "size: " << myvector.size() << std::endl;
+	std::cout << "capacity: " << myvector.capacity() << std::endl;
+	for (size_t i = 0; i < myvector.size(); i++) {
+		std::cout << myvector[i] << std::endl;
+	}
 
-	// std::vector<int> v3(v);
-	// v3.resize(7, 3);
-	// std::cout << "size: " << v3.size() << std::endl;
-	// std::cout << "capacity: " << v3.capacity() << std::endl;
-	// for (size_t i = 0; i < v3.size(); i++) {
-	// 	std::cout << v3[i] << std::endl;
-	// }
+  // myvector.insert(it, 2, 300);
 
+  // // "it" no longer valid, get a new one:
+  // it = myvector.begin();
+
+  // std::vector<int> anothervector(2, 400);
+  // myvector.insert(it + 2, anothervector.begin(), anothervector.end());
+
+  // int myarray[] = {501, 502, 503};
+  // myvector.insert(myvector.begin(), myarray, myarray + 3);
+
+  // std::cout << "myvector contains:";
+  // for (it = myvector.begin(); it < myvector.end(); it++) std::cout << " " << *it;
+  // std::cout << std::endl;
 	return 0;
 }

@@ -220,14 +220,67 @@ namespace ft {
 				_size = 0;
 			}
 
-			// TODO:
-			iterator	insert(const_iterator pos, const_reference value);
-			iterator	insert(const_iterator pos, size_type n, const_reference value);
-			template <typename InputIterator>
-			iterator	insert(const_iterator pos, InputIterator first, InputIterator last);
+			iterator	insert(const_iterator pos, const_reference value) {
+				if (_size == _capacity) {
+					reserve(_new_capacity(_capacity + 1));
+				}
+				difference_type start = pos - begin();
+				for (size_type i = _size; i > start; i--) {
+					_data[i] = _data[i - 1];
+				}
+				_data[start] = value;
+				++_size;
+				return iterator(&_data[start]);
+			}
 
-			iterator	erase(iterator pos);
-			iterator	erase(iterator first, iterator last);
+			iterator	insert(const_iterator pos, size_type n, const_reference value) {
+				if (_size + n > _capacity) {
+					reserve(_new_capacity(_size + n));
+				}
+				difference_type start = pos - begin();
+				for (size_type i = _size; i > start; i--) {
+					_data[i + n - 1] = _data[i - 1];
+				}
+				for (size_type i = 0; i < n; i++) {
+					_data[start + i] = value;
+				}
+				_size += n;
+				return iterator(&_data[start]);
+			}
+
+			template <typename InputIterator>
+			// TODO: enable_if 필요
+			iterator	insert(const_iterator pos, InputIterator first, InputIterator last) {
+				vector new_data(first, last);
+				size_type n = new_data.size();
+				if (_size + n > _capacity) {
+					reserve(_new_capacity(_size + n));
+				}
+				difference_type start = pos - begin();
+				for (size_type i = _size; i > start; i--) {
+					_data[i + n - 1] = _data[i - 1];
+				}
+				for (size_type i = 0; i < n; i++) {
+					_data[start + i] = new_data[i];
+				}
+				_size += n;
+				return iterator(&_data[start]);
+			}
+
+			// TODO:
+			iterator	erase(iterator pos) {
+				difference_type start = pos - begin();
+
+				return iterator(&_data[start]);
+			}
+
+			// TODO:
+			iterator	erase(iterator first, iterator last) {
+				vector new_data(first, last);
+				size_type n = new_data.size();
+				difference_type start = first - begin();
+
+			}
 
 			void	push_back(const_reference value) {
 				if (_size == _capacity) {
