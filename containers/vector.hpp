@@ -4,6 +4,8 @@
 # include <stdexcept>
 # include "../implements/reverse_iterator.hpp"
 # include "../implements/random_access_iterator.hpp"
+# include "../implements/equal.hpp"
+# include "../implements/lexicographical_compare.hpp"
 
 namespace ft {
 	template <typename T, typename Allocator = std::allocator<T> >
@@ -224,7 +226,7 @@ namespace ft {
 				if (_size == _capacity) {
 					reserve(_new_capacity(_capacity + 1));
 				}
-				difference_type start = pos - begin();
+				size_type start = static_cast<size_type>(pos - begin());
 				for (size_type i = _size; i > start; i--) {
 					_data[i] = _data[i - 1];
 				}
@@ -237,7 +239,7 @@ namespace ft {
 				if (_size + n > _capacity) {
 					reserve(_new_capacity(_size + n));
 				}
-				difference_type start = pos - begin();
+				size_type start = static_cast<size_type>(pos - begin());
 				for (size_type i = _size; i > start; i--) {
 					_data[i + n - 1] = _data[i - 1];
 				}
@@ -256,7 +258,7 @@ namespace ft {
 				if (_size + n > _capacity) {
 					reserve(_new_capacity(_size + n));
 				}
-				difference_type start = pos - begin();
+				size_type start = static_cast<size_type>(pos - begin());
 				for (size_type i = _size; i > start; i--) {
 					_data[i + n - 1] = _data[i - 1];
 				}
@@ -267,19 +269,24 @@ namespace ft {
 				return iterator(&_data[start]);
 			}
 
-			// TODO:
 			iterator	erase(iterator pos) {
-				difference_type start = pos - begin();
-
+				size_type start = static_cast<size_type>(pos - begin());
+				for (size_type i = start; i < _size - 1; i++) {
+					_data[i] = _data[i + 1];
+				}
+				--_size;
 				return iterator(&_data[start]);
 			}
 
-			// TODO:
 			iterator	erase(iterator first, iterator last) {
 				vector new_data(first, last);
 				size_type n = new_data.size();
-				difference_type start = first - begin();
-
+				size_type start = static_cast<size_type>(pos - begin());
+				for (size_type i = start; i < _size - n -1; i++) {
+					_data[i] = _data[i + n];
+				}
+				_size -= n;
+				return iterator(&_data[start]);
 			}
 
 			void	push_back(const_reference value) {
@@ -310,35 +317,57 @@ namespace ft {
 				_size = n;
 			}
 
-			// FIXME: 버그 가능성 있음
 			void	swap(vector& vec) {
-				vector *tmp = *this;
-				*this = vec;
-				vec = *tmp;
+				size_type				tmp_size = _size;
+				size_type				tmp_capacity = _capacity;
+				pointer					tmp_data = _data;
+				allocator_type	tmp_alloc = _alloc;
+				_size = vec.size();
+				_capacity = vec.capacity();
+				_data = vec.data();
+				_alloc = vec.get_allocator();
+				vec._size = tmp_size;
+				vec._capacity = tmp_capacity;
+				vec._data = tmp_data;
+				vec._alloc = tmp_alloc;
 			}
 	};
 	// Non-member function overloads
 	template <typename T, typename Allocator>
-	bool	operator==(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y);
+	bool	operator==(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y) {
+		return ft::equal(x.begin(), x.end(), y.begin(), y.end());
+	}
 
 	template <typename T, typename Allocator>
-	bool	operator!=(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y);
+	bool	operator!=(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y) {
+		return !(x == y);
+	}
 
 	template <typename T, typename Allocator>
-	bool	operator<(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y);
+	bool	operator<(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y) {
+		return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+	}
 
 	template <typename T, typename Allocator>
-	bool	operator<=(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y);
+	bool	operator<=(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y) {
+		return !(y < x);
+	}
 
 	template <typename T, typename Allocator>
-	bool	operator>(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y);
+	bool	operator>(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y) {
+		return y < x;
+	}
 
 	template <typename T, typename Allocator>
-	bool	operator>=(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y);
+	bool	operator>=(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y) {
+		return !(x < y);
+	}
 
 	// Non-member function
 	template<typename T, typename Allocator>
-	void	swap(ft::vector<T, Allocator>& x, ft::vector<T, Allocator>& y);
+	void	swap(ft::vector<T, Allocator>& x, ft::vector<T, Allocator>& y) {
+		x.swap(y);
+	}
 }
 
 #endif
