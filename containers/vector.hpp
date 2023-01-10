@@ -6,6 +6,8 @@
 # include "../implements/random_access_iterator.hpp"
 # include "../implements/equal.hpp"
 # include "../implements/lexicographical_compare.hpp"
+# include "../implements/enable_if.hpp"
+# include "../implements/is_integral.hpp"
 
 namespace ft {
 	template <typename T, typename Allocator = std::allocator<T> >
@@ -41,8 +43,8 @@ namespace ft {
 
 		public:
 			// Constrcutor
-			vector()
-			: _size(0), _capacity(0), _data(NULL) {}
+			// vector()
+			// : _size(0), _capacity(0), _data(NULL) {}
 
 			vector(const allocator_type& alloc = allocator_type())
 			: _size(0), _capacity(0), _data(NULL), _alloc(alloc) {}
@@ -61,9 +63,8 @@ namespace ft {
 			}
 
 			template <typename InputIterator>
-			// TODO: enable_if 필요
 			// NOTE: push_back에 의해 capacity와 size가 일치하지 않을 수 있다.
-			vector(InputIterator first, InputIterator last, const Allocator& alloc = allocator_type())
+			vector(InputIterator first, InputIterator last, const Allocator& alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = 0)
 			: _size(0), _capacity(0), _data(NULL), _alloc(alloc)
 			{
 				while (first != last) {
@@ -103,9 +104,8 @@ namespace ft {
 			}
 
 			template <typename InputIterator>
-			// TODO: enable_if 필요
 			// NOTE: push_back에 의해 capacity와 size가 일치하지 않을 수 있다.
-			void	assign(InputIterator first, InputIterator last) {
+			void	assign(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = 0) {
 				clear();
 				while (first != last) {
 					push_back(*first);
@@ -168,10 +168,10 @@ namespace ft {
 			}
 
 			iterator	end() {
-				return iterator(_data[_size]);
+				return iterator(&_data[_size]);
 			}
 			const_iterator	end() const {
-				return const_iterator(_data[_size]);
+				return const_iterator(&_data[_size]);
 			}
 
 			reverse_iterator	rbegin() {
@@ -203,7 +203,7 @@ namespace ft {
 
 			void	reserve(size_type new_capacity) {
 				if (new_capacity > _capacity) {
-					pointer new_data = _alloc(new_capacity);
+					pointer new_data = _alloc.allocate(new_capacity);
 					for (size_type i = 0; i < _size; i++) {
 						new_data[i] = _data[i];
 					}
@@ -251,8 +251,7 @@ namespace ft {
 			}
 
 			template <typename InputIterator>
-			// TODO: enable_if 필요
-			iterator	insert(const_iterator pos, InputIterator first, InputIterator last) {
+			iterator	insert(const_iterator pos, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = 0) {
 				vector new_data(first, last);
 				size_type n = new_data.size();
 				if (_size + n > _capacity) {
