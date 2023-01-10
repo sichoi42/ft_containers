@@ -281,7 +281,7 @@ namespace ft {
 			iterator	erase(iterator first, iterator last) {
 				vector new_data(first, last);
 				size_type n = new_data.size();
-				size_type start = static_cast<size_type>(pos - begin());
+				size_type start = static_cast<size_type>(new_data.begin() - begin());
 				for (size_type i = start; i < _size - n -1; i++) {
 					_data[i] = _data[i + n];
 				}

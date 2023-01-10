@@ -5,21 +5,21 @@
 namespace ft {
 	template <typename Iterator>
 	class reverse_iterator
-	: public std::iterator<typename iterator_traits<Iterator>::iterator_category,
-										typename iterator_traits<Iterator>::value_type,
-										typename iterator_traits<Iterator>::difference_type,
-										typename iterator_traits<Iterator>::pointer,
-										typename iterator_traits<Iterator>::reference> {
+	: public std::iterator<typename std::iterator_traits<Iterator>::iterator_category,
+										typename std::iterator_traits<Iterator>::value_type,
+										typename std::iterator_traits<Iterator>::difference_type,
+										typename std::iterator_traits<Iterator>::pointer,
+										typename std::iterator_traits<Iterator>::reference> {
 		protected:
 			Iterator _cur;
 
 		public:
 			typedef Iterator																							iterator_type;
-			typedef typename iterator_traits<Iterator>::iterator_category	iterator_category;
-			typedef typename iterator_traits<Iterator>::value_type				value_type;
-			typedef typename iterator_traits<Iterator>::difference_type		difference_type;
-			typedef typename iterator_traits<Iterator>::pointer						pointer;
-			typedef typename iterator_traits<Iterator>::reference					reference;
+			typedef typename std::iterator_traits<Iterator>::iterator_category	iterator_category;
+			typedef typename std::iterator_traits<Iterator>::value_type				value_type;
+			typedef typename std::iterator_traits<Iterator>::difference_type		difference_type;
+			typedef typename std::iterator_traits<Iterator>::pointer						pointer;
+			typedef typename std::iterator_traits<Iterator>::reference					reference;
 
 		public:
 			// Constrcutor

@@ -13,7 +13,8 @@ namespace ft {
 			typedef typename iterator_traits<Iterator>::pointer	pointer;
 			typedef typename iterator_traits<Iterator>::reference	reference;
 
-		private _cur;
+		private:
+		Iterator _cur;
 
 		// Constrcutor
 		random_access_iterator() {}
