@@ -15,12 +15,16 @@ namespace ft {
 		public:
 			typedef T	value_type;
 			typedef Allocator	allocator_type;
-			typedef value_type*	pointer;
-			typedef const value_type*	const_pointer;
+
+			typedef typename allocator_type::pointer	pointer;
+			typedef typename allocator_type::const_pointer	const_pointer;
 			typedef value_type&	reference;
 			typedef const value_type&	const_reference;
-			typedef size_t	size_type;
-			typedef ptrdiff_t	difference_type;
+
+			typedef typename allocator_type::size_type size_type;
+			typedef typename allocator_type::difference_type difference_type;
+
+			// FIXME:
 			typedef ft::random_access_iterator<pointer>	iterator;
 			typedef ft::random_access_iterator<const_pointer>	const_iterator;
 			typedef ft::reverse_iterator<iterator>	reverse_iterator;
@@ -168,10 +172,10 @@ namespace ft {
 			}
 
 			iterator	end() {
-				return iterator(&_data[_size]);
+				return iterator(_data + _size);
 			}
 			const_iterator	end() const {
-				return const_iterator(&_data[_size]);
+				return const_iterator(_data + _size);
 			}
 
 			reverse_iterator	rbegin() {
@@ -222,11 +226,11 @@ namespace ft {
 				_size = 0;
 			}
 
-			iterator	insert(const_iterator pos, const_reference value) {
+			iterator	insert(iterator pos, const_reference value) {
+				size_type start = static_cast<size_type>(pos - begin());
 				if (_size == _capacity) {
 					reserve(_new_capacity(_capacity + 1));
 				}
-				size_type start = static_cast<size_type>(pos - begin());
 				for (size_type i = _size; i > start; i--) {
 					_data[i] = _data[i - 1];
 				}
@@ -235,11 +239,12 @@ namespace ft {
 				return iterator(&_data[start]);
 			}
 
-			iterator	insert(const_iterator pos, size_type n, const_reference value) {
+			iterator	insert(iterator pos, size_type n, const_reference value) {
+				size_type start = static_cast<size_type>(pos - begin());
 				if (_size + n > _capacity) {
 					reserve(_new_capacity(_size + n));
 				}
-				size_type start = static_cast<size_type>(pos - begin());
+				std::cout << start << std::endl;
 				for (size_type i = _size; i > start; i--) {
 					_data[i + n - 1] = _data[i - 1];
 				}
@@ -251,13 +256,13 @@ namespace ft {
 			}
 
 			template <typename InputIterator>
-			iterator	insert(const_iterator pos, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = 0) {
+			iterator	insert(iterator pos, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = 0) {
 				vector new_data(first, last);
 				size_type n = new_data.size();
+				size_type start = static_cast<size_type>(pos - begin());
 				if (_size + n > _capacity) {
 					reserve(_new_capacity(_size + n));
 				}
-				size_type start = static_cast<size_type>(pos - begin());
 				for (size_type i = _size; i > start; i--) {
 					_data[i + n - 1] = _data[i - 1];
 				}
@@ -269,7 +274,7 @@ namespace ft {
 			}
 
 			iterator	erase(iterator pos) {
-				size_type start = static_cast<size_type>(pos - begin());
+				size_type start = pos - begin();
 				for (size_type i = start; i < _size - 1; i++) {
 					_data[i] = _data[i + 1];
 				}
@@ -280,7 +285,7 @@ namespace ft {
 			iterator	erase(iterator first, iterator last) {
 				vector new_data(first, last);
 				size_type n = new_data.size();
-				size_type start = static_cast<size_type>(new_data.begin() - begin());
+				size_type start = new_data.begin() - begin();
 				for (size_type i = start; i < _size - n -1; i++) {
 					_data[i] = _data[i + n];
 				}
