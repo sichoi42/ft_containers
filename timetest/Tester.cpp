@@ -29,6 +29,19 @@ void Tester::simple_test_stack() {
 		std::cout << GREEN << "[PASS] Our stack with vector is fast enough." << RESET << std::endl;
 	}
 
+	// Test Stack with ft vector
+	std::stack<int, ft::vector<int> > st_with_ft_1;
+	std_clock = get_simple_test_time_stack(1000000, st_with_ft_1);
+	ft::stack<int, ft::vector<int> > ft_st_with_ft_1;
+	ft_clock = get_simple_test_time_stack(1000000, ft_st_with_ft_1);
+	std::cout << "Our stack with ft vector is " << static_cast<double>(std_clock) / static_cast<double>(ft_clock) << " times faster." << std::endl;
+	std::cout << "Our stack with ft vector is " << static_cast<double>(ft_clock) / static_cast<double>(std_clock) << " times slower." << std::endl;
+	if (static_cast<double>(ft_clock) / static_cast<double>(std_clock) >= 20.0000) {
+		std::cout << RED << "[FAIL] Our stack with ft vector is too slow." << RESET << std::endl;
+	} else {
+		std::cout << GREEN << "[PASS] Our stack with ft vector is fast enough." << RESET << std::endl;
+	}
+
 	// Test Stack with list
 	std::stack<int, std::list<int> > st2;
 	std_clock = get_simple_test_time_stack(1000000, st2);
