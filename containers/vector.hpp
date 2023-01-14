@@ -18,13 +18,12 @@ namespace ft {
 
 			typedef typename allocator_type::pointer	pointer;
 			typedef typename allocator_type::const_pointer	const_pointer;
-			typedef value_type&	reference;
-			typedef const value_type&	const_reference;
+			typedef typename allocator_type::reference	reference;
+			typedef typename allocator_type::const_reference	const_reference;
 
 			typedef typename allocator_type::size_type size_type;
 			typedef typename allocator_type::difference_type difference_type;
 
-			// FIXME:
 			typedef ft::random_access_iterator<pointer>	iterator;
 			typedef ft::random_access_iterator<const_pointer>	const_iterator;
 			typedef ft::reverse_iterator<iterator>	reverse_iterator;
@@ -47,34 +46,37 @@ namespace ft {
 
 		public:
 			// Constrcutor
-			// vector()
-			// : _size(0), _capacity(0), _data(NULL) {}
-
-			vector(const allocator_type& alloc = allocator_type())
+			explicit vector(const allocator_type& alloc = allocator_type())
 			: _size(0), _capacity(0), _data(NULL), _alloc(alloc) {}
 
-			vector(size_type n, const_reference value = value_type(), const Allocator& alloc = allocator_type())
-			: _size(n), _capacity(n), _alloc(alloc)
-			{
-				if (n > 0) {
-					_data = _alloc.allocate(n);
-					for (size_type i = 0; i < n; i++) {
-						_data[i] = value;
-					}
-				} else {
-					_data = NULL;
-				}
-			}
+			explicit vector(size_type n, const value_type& value = value_type(), const allocator_type& alloc = allocator_type())
+			: _size(n), _capacity(n), _alloc(alloc) {
+        if (n > 0) {
+            _data = _alloc.allocate(n);
+            for (size_type i = 0; i < n; i++) {
+                _data[i] = value;
+            }
+        } else {
+            _data = NULL;
+        }
+    }
 
 			template <typename InputIterator>
 			// NOTE: push_back에 의해 capacity와 size가 일치하지 않을 수 있다.
-			vector(InputIterator first, InputIterator last, const Allocator& alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = 0)
-			: _size(0), _capacity(0), _data(NULL), _alloc(alloc)
+			vector(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = 0)
+			: _size(0), _capacity(0), _data(NULL)
 			{
 				while (first != last) {
 					push_back(*first);
 					first++;
 				}
+				pointer _new_data = _alloc.allocate(_size);
+        for (size_type i = 0; i < _size; i++) {
+            _new_data[i] = _data[i];
+        }
+        _alloc.deallocate(_data, _capacity);
+        _data = _new_data;
+        _capacity = _size;
 			}
 
 			// Copy constructor
@@ -244,7 +246,6 @@ namespace ft {
 				if (_size + n > _capacity) {
 					reserve(_new_capacity(_size + n));
 				}
-				std::cout << start << std::endl;
 				for (size_type i = _size; i > start; i--) {
 					_data[i + n - 1] = _data[i - 1];
 				}
@@ -273,8 +274,8 @@ namespace ft {
 				return iterator(&_data[start]);
 			}
 
-			iterator	erase(iterator pos) {
-				size_type start = pos - begin();
+			iterator	erase(const_iterator pos) {
+				size_type start = static_cast<size_type>(pos - begin());
 				for (size_type i = start; i < _size - 1; i++) {
 					_data[i] = _data[i + 1];
 				}
@@ -282,15 +283,15 @@ namespace ft {
 				return iterator(&_data[start]);
 			}
 
-			iterator	erase(iterator first, iterator last) {
-				vector new_data(first, last);
-				size_type n = new_data.size();
-				size_type start = new_data.begin() - begin();
-				for (size_type i = start; i < _size - n -1; i++) {
-					_data[i] = _data[i + n];
+			iterator	erase(const_iterator first, const_iterator last) {
+				difference_type l = first - begin();
+				difference_type r = last - begin();
+				size_type n = static_cast<size_type>(r - l);
+				for (size_type i = r; i < _size; i++) {
+					_data[i - n] = _data[i];
 				}
 				_size -= n;
-				return iterator(&_data[start]);
+				return iterator(&_data[l]);
 			}
 
 			void	push_back(const_reference value) {
@@ -305,9 +306,9 @@ namespace ft {
 				--_size;
 			}
 
-			void	resize(size_type n) {
-				resize(n, 0);
-			}
+			// void	resize(size_type n) {
+			// 	resize(n, 0);
+			// }
 
 			void	resize(size_type n, value_type value = value_type()) {
 				if (n > _size) {
@@ -339,7 +340,7 @@ namespace ft {
 	// Non-member function overloads
 	template <typename T, typename Allocator>
 	bool	operator==(const ft::vector<T, Allocator>& x, const ft::vector<T, Allocator>& y) {
-		return ft::equal(x.begin(), x.end(), y.begin(), y.end());
+		return (x.size() == y.size()) && ft::equal(x.begin(), x.end(), y.begin());
 	}
 
 	template <typename T, typename Allocator>
