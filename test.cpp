@@ -85,8 +85,23 @@ class RBTree {
   // TODO: implement
   // Balancing RBTree after deletion
   // void delete_fixup(NodePtr x)
-  // rb_transplant(NodePtr u, NodePtr v)
-  // delete_node_helper(NodePtr node, int key)
+
+  // u: 기증자, v: 수취자
+  // u의 부모와 v의 부모를 연결한다.
+  void transplant(NodePtr u, NodePtr v) {
+    // u가 root인 경우, v를 root로 만든다.
+    if (u->parent == NULL) {
+      root = v;
+    } else if (u == u->parent->left) {
+      // u가 부모의 왼쪽 자식인 경우, v를 u의 부모의 왼쪽 자식으로 만든다.
+      u->parent->left = v;
+    } else {
+      // u가 부모의 오른쪽 자식인 경우, v를 u의 부모의 오른쪽 자식으로 만든다.
+      u->parent->right = v;
+    }
+    // v의 부모를 u의 부모로 만든다.
+    v->parent = u->parent;
+  }
 
   // Balancing RBTree after insertion
   void insert_fixup(NodePtr newNode) {
@@ -286,6 +301,44 @@ class RBTree {
     insert_fixup(newNode);
   }
 
+  void delete_node(int key) {
+    NodePtr target = search_tree_helper(root, key);
+    if (target == nil) {
+      // 해당 key를 가진 노드가 없다.
+      return ;
+    }
+    Color origin_color = target->color;
+    NodePtr x, y;
+    // target의 왼쪽 자식이 nil이라면, target을 target의 오른쪽 자식으로 이식한다.
+    if (target->left == nil) {
+      x = target->right;
+      transplant(target, x);
+    } else if (target->right == nil) {
+      // target의 오른쪽 자식이 nil이라면, target을 target의 왼쪽 자식으로 이식한다.
+      x = target->left;
+      transplant(target, x);
+    } else { // 자식 둘 다 nil이 아니라면
+      y = get_successor(target);
+      y->color = origin_color;
+      x = y->right;
+      if (y->parent == target) {
+        x->parent = y;
+      } else {
+        transplant(y, x);
+        y->right = target->right;
+        y->right->parent = y;
+      }
+      transplant(target, y);
+      y->left = target->left;
+      y->left->parent = y;
+      y->color = origin_color;
+    }
+    delete target;
+    if (origin_color == BLACK) {
+      // delete_fixup(x);
+    }
+  }
+
   void print_tree() {
     if (root) {
       print_helper(root, "", true);
@@ -293,7 +346,6 @@ class RBTree {
     }
   }
 };
-
 
 int	main(void)
 {
@@ -309,6 +361,8 @@ int	main(void)
   rbtree.insert(75);
   rbtree.print_tree();
   rbtree.insert(57);
+  rbtree.print_tree();
+  rbtree.delete_node(40);
   rbtree.print_tree();
   return (0);
 }
