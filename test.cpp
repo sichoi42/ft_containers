@@ -64,6 +64,9 @@ class RBTree {
     }
   }
 
+  #define BG_RED "\033[41m"
+  #define BG_BLACK "\033[40m"
+  #define BG_RESET "\033[0m"
   void print_helper(NodePtr root, std::string indent, bool last) {
     if (root != nil) {
       std::cout << indent;
@@ -76,15 +79,109 @@ class RBTree {
       }
 
       Color c = root->color ? RED : BLACK;
-      std::cout << root->key << "(" << c << ")" << std::endl;
+      // c가 RED인 경우 빨간색 배경으로 출력
+      if (c == RED) {
+        std::cout << BG_RED << root->key << "(" << c << ")" << BG_RESET << std::endl;
+      } else {
+        std::cout << BG_BLACK << root->key << "(" << c << ")" << BG_RESET << std::endl;
+      }
       print_helper(root->left, indent, false);
       print_helper(root->right, indent, true);
     }
   }
 
-  // TODO: implement
+  void swap_color(NodePtr u, NodePtr v) {
+    Color tmp = u->color;
+    u->color = v->color;
+    v->color = tmp;
+  }
+
+  void delete_fixup_left(NodePtr& s, NodePtr& x) {
+    s = x->parent->right;
+    // Case-1: x의 형제 노드 s가 레드인 경우
+    if (s->color == RED) {
+      swap_color(s, x->parent);
+      left_rotate(x->parent);
+      s = x->parent->right;
+    }
+    // Case-2: s의 자식 노드가 모두 블랙인 경우
+    // x는 doubly black이므로 x의 블랙과 s의 블랙을 부모에게 전가한다.
+    if (s->left->color == BLACK && s->right->color == BLACK) {
+      s->color = RED;
+      // x의 부모가 red and black이거나 doubly black이면서 root노드인 경우
+      // 블랙으로 바꾸면 상황 종료
+      if (x->parent->color == RED || x->parent == this->root) {
+        x->parent->color = BLACK;
+        x = this->root;
+      } else {
+        // 그렇지 않으면 기준을 부모로 올려서 다시 검사
+        x = x->parent;
+      }
+    } else {
+      // Case-3: s의 오른쪽 자식만 블랙인 경우
+      if (s->right->color == BLACK) {
+        swap_color(s, s->left);
+        right_rotate(s);
+        s = x->parent->right;
+      }
+      // Case-4: s의 왼쪽 자식만 블랙인 경우
+      s->color = x->parent->color;
+      x->parent->color = BLACK;
+      s->right->color = BLACK;
+      left_rotate(x->parent);
+      x = this->root;
+    }
+  }
+
+  void delete_fixup_right(NodePtr& s, NodePtr& x) {
+    s = x->parent->left;
+    // Case-1: x의 형제 노드 s가 레드인 경우
+    if (s->color == RED) {
+      swap_color(s, x->parent);
+      right_rotate(x->parent);
+      s = x->parent->left;
+    }
+    // Case-2: s의 자식 노드가 모두 블랙인 경우
+    // x는 doubly black이므로 x의 블랙과 s의 블랙을 부모에게 전가한다.
+    if (s->left->color == BLACK && s->right->color == BLACK) {
+      s->color = RED;
+      // x의 부모가 red and black이거나 doubly black이면서 root노드인 경우
+      // 블랙으로 바꾸면 상황 종료
+      if (x->parent->color == RED || x->parent == this->root) {
+        x->parent->color = BLACK;
+        x = this->root;
+      } else {
+        // 그렇지 않으면 기준을 부모로 올려서 다시 검사
+        x = x->parent;
+      }
+    } else {
+      // Case-3: s의 왼쪽 자식만 블랙인 경우
+      if (s->left->color == BLACK) {
+        swap_color(s, s->right);
+        left_rotate(s);
+        s = x->parent->left;
+      }
+      // Case-4: s의 오른쪽 자식만 블랙인 경우
+      s->color = x->parent->color;
+      x->parent->color = BLACK;
+      s->left->color = BLACK;
+      right_rotate(x->parent);
+      x = root;
+    }
+  }
+
   // Balancing RBTree after deletion
-  // void delete_fixup(NodePtr x)
+  void delete_fixup(NodePtr x) {
+    NodePtr s = NULL;
+    while (x != root && x->color == BLACK) {
+      if (x == x->parent->left) {
+        delete_fixup_left(s, x);
+      } else {
+        delete_fixup_right(s, x);
+      }
+    }
+    x->color = BLACK;
+  }
 
   // u: 기증자, v: 수취자
   // u의 부모와 v의 부모를 연결한다.
@@ -229,7 +326,7 @@ class RBTree {
     }
     // y의 부모를 x의 부모로 설정한다.
     y->parent = x->parent;
-    if (x->parent == nil) {
+    if (x->parent == NULL) {
       this->root = y;
     } else if (x == x->parent->left) {
       x->parent->left = y;
@@ -252,7 +349,7 @@ class RBTree {
     }
     // y의 부모를 x의 부모로 설정한다.
     y->parent = x->parent;
-    if (x->parent == nil) {
+    if (x->parent == NULL) {
       this->root = y;
     } else if (x == x->parent->right) {
       x->parent->right = y;
@@ -308,7 +405,7 @@ class RBTree {
       return ;
     }
     Color origin_color = target->color;
-    NodePtr x, y;
+    NodePtr x;
     // target의 왼쪽 자식이 nil이라면, target을 target의 오른쪽 자식으로 이식한다.
     if (target->left == nil) {
       x = target->right;
@@ -318,8 +415,8 @@ class RBTree {
       x = target->left;
       transplant(target, x);
     } else { // 자식 둘 다 nil이 아니라면
-      y = get_successor(target);
-      y->color = origin_color;
+      NodePtr y = get_successor(target);
+      origin_color = y->color;
       x = y->right;
       if (y->parent == target) {
         x->parent = y;
@@ -331,11 +428,11 @@ class RBTree {
       transplant(target, y);
       y->left = target->left;
       y->left->parent = y;
-      y->color = origin_color;
+      y->color = target->color;
     }
     delete target;
     if (origin_color == BLACK) {
-      // delete_fixup(x);
+      delete_fixup(x);
     }
   }
 
@@ -363,6 +460,16 @@ int	main(void)
   rbtree.insert(57);
   rbtree.print_tree();
   rbtree.delete_node(40);
+  rbtree.print_tree();
+  rbtree.delete_node(55);
+  rbtree.print_tree();
+  rbtree.delete_node(75);
+  rbtree.print_tree();
+  rbtree.delete_node(57);
+  rbtree.print_tree();
+  rbtree.delete_node(60);
+  rbtree.print_tree();
+  rbtree.delete_node(65);
   rbtree.print_tree();
   return (0);
 }
