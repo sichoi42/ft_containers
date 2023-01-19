@@ -12,7 +12,7 @@ enum Color { RED, BLACK };
 template <typename T> struct Node {
   typedef T value_type;
 
-  value_type key;
+  value_type value;
   Node *left;
   Node *right;
   Node *parent;
@@ -24,7 +24,7 @@ template <typename T> struct Node {
 /* Tree debug tools */
 template <typename NodePtr> void preorder_helper(NodePtr node, NodePtr nil) {
   if (node != nil) {
-    std::cout << node->key << " ";
+    std::cout << node->value << " ";
     preorder_helper(node->left);
     preorder_helper(node->right);
   }
@@ -33,7 +33,7 @@ template <typename NodePtr> void preorder_helper(NodePtr node, NodePtr nil) {
 template <typename NodePtr> void inorder_helper(NodePtr node, NodePtr nil) {
   if (node != nil) {
     inorder_helper(node->left);
-    std::cout << node->key << " ";
+    std::cout << node->value << " ";
     inorder_helper(node->right);
   }
 }
@@ -42,7 +42,7 @@ template <typename NodePtr> void postorder_helper(NodePtr node, NodePtr nil) {
   if (node != nil) {
     postorder_helper(node->left);
     postorder_helper(node->right);
-    std::cout << node->key << " ";
+    std::cout << node->value << " ";
   }
 }
 
@@ -64,10 +64,10 @@ void print_helper(NodePtr root, std::string indent, bool last, NodePtr nil) {
     Color c = root->color ? RED : BLACK;
     // c가 RED인 경우 빨간색 배경으로 출력
     if (c == RED) {
-      std::cout << BG_RED << root->key << "(" << c << ")" << BG_RESET
+      std::cout << BG_RED << root->value << "(" << c << ")" << BG_RESET
                 << std::endl;
     } else {
-      std::cout << BG_BLACK << root->key << "(" << c << ")" << BG_RESET
+      std::cout << BG_BLACK << root->value << "(" << c << ")" << BG_RESET
                 << std::endl;
     }
     print_helper(root->left, indent, false);
