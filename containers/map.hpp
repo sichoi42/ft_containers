@@ -1,7 +1,11 @@
+#ifndef MAP_HPP
+#define MAP_HPP
+
 #include "./implements/equal.hpp"
 #include "./implements/lexicographical_compare.hpp"
 #include "./implements/pair.hpp"
 #include "./implements/reverse_iterator.hpp"
+#include "./utils/rbtree.hpp"
 #include <exception>
 #include <functional>
 #include <memory>
@@ -25,11 +29,10 @@ public:
   typedef typename allocator_type::const_reference const_reference;
 
   // FIXME: implement rbtree
-  typedef typename rbtree<value_type, key_type,
-                          key_compare allocator_type>::iterator iterator;
-  typedef typename rbtree<value_type, key_type,
-                          key_compare allocator_type>::const_iterator
-      const_iterator;
+  typedef typename rbtree<value_type, key_type, value_compare,
+                          allocator_type>::iterator iterator;
+  typedef typename rbtree<value_type, key_type, value_compare,
+                          allocator_type>::const_iterator const_iterator;
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -252,3 +255,5 @@ void swap(ft::map<U, V, Compare, Allocator> &x,
 }
 
 } // namespace ft
+
+#endif
