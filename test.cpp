@@ -1,10 +1,7 @@
 #include <iostream>
 #include <map>
 
-enum Color {
-  BLACK,
-  RED
-};
+enum Color { BLACK, RED };
 
 struct Node {
   int key;
@@ -14,12 +11,12 @@ struct Node {
   Color color;
 };
 
-typedef Node* NodePtr;
+typedef Node *NodePtr;
 
 class RBTree {
-  private:
-    NodePtr root;
-    NodePtr nil;
+private:
+  NodePtr root;
+  NodePtr nil;
 
   void init_nil_node(NodePtr node, NodePtr parent) {
     node->parent = parent;
@@ -64,9 +61,9 @@ class RBTree {
     }
   }
 
-  #define BG_RED "\033[41m"
-  #define BG_BLACK "\033[40m"
-  #define BG_RESET "\033[0m"
+#define BG_RED "\033[41m"
+#define BG_BLACK "\033[40m"
+#define BG_RESET "\033[0m"
   void print_helper(NodePtr root, std::string indent, bool last) {
     if (root != nil) {
       std::cout << indent;
@@ -81,9 +78,11 @@ class RBTree {
       Color c = root->color ? RED : BLACK;
       // c가 RED인 경우 빨간색 배경으로 출력
       if (c == RED) {
-        std::cout << BG_RED << root->key << "(" << c << ")" << BG_RESET << std::endl;
+        std::cout << BG_RED << root->key << "(" << c << ")" << BG_RESET
+                  << std::endl;
       } else {
-        std::cout << BG_BLACK << root->key << "(" << c << ")" << BG_RESET << std::endl;
+        std::cout << BG_BLACK << root->key << "(" << c << ")" << BG_RESET
+                  << std::endl;
       }
       print_helper(root->left, indent, false);
       print_helper(root->right, indent, true);
@@ -96,7 +95,7 @@ class RBTree {
     v->color = tmp;
   }
 
-  void delete_fixup_left(NodePtr& s, NodePtr& x) {
+  void delete_fixup_left(NodePtr &s, NodePtr &x) {
     s = x->parent->right;
     // Case-1: x의 형제 노드 s가 레드인 경우
     if (s->color == RED) {
@@ -133,7 +132,7 @@ class RBTree {
     }
   }
 
-  void delete_fixup_right(NodePtr& s, NodePtr& x) {
+  void delete_fixup_right(NodePtr &s, NodePtr &x) {
     s = x->parent->left;
     // Case-1: x의 형제 노드 s가 레드인 경우
     if (s->color == RED) {
@@ -205,7 +204,7 @@ class RBTree {
     // new node의 부모의 색깔이 레드인 동안 반복한다.
     while (newNode->parent->color == RED) {
       NodePtr gp = newNode->parent->parent;
-       // 부모가 조부모의 오른쪽 자식인 경우
+      // 부모가 조부모의 오른쪽 자식인 경우
       if (newNode->parent == gp->left) {
         // Case 1: 부모의 형제 노드가 레드인 경우
         if (gp->right->color == RED) {
@@ -246,8 +245,7 @@ class RBTree {
     root->color = BLACK;
   }
 
-  public:
-
+public:
   RBTree() {
     nil = new Node;
     nil->color = BLACK;
@@ -256,21 +254,13 @@ class RBTree {
     root = nil;
   }
 
-  void preorder() {
-    preorder_helper(this->root);
-  }
+  void preorder() { preorder_helper(this->root); }
 
-  void inorder() {
-    inorder_helper(this->root);
-  }
+  void inorder() { inorder_helper(this->root); }
 
-  void postorder() {
-    postorder_helper(this->root);
-  }
+  void postorder() { postorder_helper(this->root); }
 
-  NodePtr search_tree(int k) {
-    return search_tree_helper(this->root, k);
-  }
+  NodePtr search_tree(int k) { return search_tree_helper(this->root, k); }
 
   NodePtr get_min_node(NodePtr node) {
     while (node->left != nil) {
@@ -292,7 +282,8 @@ class RBTree {
       return get_min_node(x->right);
     }
     // 선택한 노드의 오른쪽 자식이 없는 경우
-    // 해당 노드가 서브 트리 내의 최댓값임을 의미하므로 서브 트리의 루트 노드를 선택한다.
+    // 해당 노드가 서브 트리 내의 최댓값임을 의미하므로 서브 트리의 루트 노드를
+    // 선택한다.
     NodePtr y = x->parent;
     while (y != nil && x == y->right) {
       x = y;
@@ -307,7 +298,8 @@ class RBTree {
       return get_max_node(x->left);
     }
     // 선택한 노드의 왼쪽 자식이 없는 경우
-    // 해당 노드가 서브 트리 내의 최솟값임을 의미하므로 서브 트리의 루트 노드를 선택한다.
+    // 해당 노드가 서브 트리 내의 최솟값임을 의미하므로 서브 트리의 루트 노드를
+    // 선택한다.
     NodePtr y = x->parent;
     while (y != nil && x == y->left) {
       x = y;
@@ -343,7 +335,8 @@ class RBTree {
     NodePtr y = x->left;
     // y의 오른쪽 서브트리를 x의 왼쪽 서브트리로 설정한다.
     x->left = y->right;
-    // y가 오른쪽 서브트리를 가진다면, y의 오른쪽 서브트리의 부모를 x로 설정한다.
+    // y가 오른쪽 서브트리를 가진다면, y의 오른쪽 서브트리의 부모를 x로
+    // 설정한다.
     if (y->right != nil) {
       y->right->parent = x;
     }
@@ -375,7 +368,7 @@ class RBTree {
     if (x == nil) {
       newNode->color = BLACK;
       this->root = newNode;
-      return ;
+      return;
     }
     // x는 leaf가 되고, y는 leaf의 부모 노드가 된다.
     while (x != nil) {
@@ -393,7 +386,7 @@ class RBTree {
       y->left = newNode;
     }
     if (newNode->parent->parent == NULL) {
-      return ;
+      return;
     }
     insert_fixup(newNode);
   }
@@ -402,16 +395,18 @@ class RBTree {
     NodePtr target = search_tree_helper(root, key);
     if (target == nil) {
       // 해당 key를 가진 노드가 없다.
-      return ;
+      return;
     }
     Color origin_color = target->color;
     NodePtr x;
-    // target의 왼쪽 자식이 nil이라면, target을 target의 오른쪽 자식으로 이식한다.
+    // target의 왼쪽 자식이 nil이라면, target을 target의 오른쪽 자식으로
+    // 이식한다.
     if (target->left == nil) {
       x = target->right;
       transplant(target, x);
     } else if (target->right == nil) {
-      // target의 오른쪽 자식이 nil이라면, target을 target의 왼쪽 자식으로 이식한다.
+      // target의 오른쪽 자식이 nil이라면, target을 target의 왼쪽 자식으로
+      // 이식한다.
       x = target->left;
       transplant(target, x);
     } else { // 자식 둘 다 nil이 아니라면
@@ -444,32 +439,51 @@ class RBTree {
   }
 };
 
-int	main(void)
-{
-  RBTree	rbtree;
-  rbtree.insert(55);
-  rbtree.print_tree();
-  rbtree.insert(40);
-  rbtree.print_tree();
-  rbtree.insert(65);
-  rbtree.print_tree();
-  rbtree.insert(60);
-  rbtree.print_tree();
-  rbtree.insert(75);
-  rbtree.print_tree();
-  rbtree.insert(57);
-  rbtree.print_tree();
-  rbtree.delete_node(40);
-  rbtree.print_tree();
-  rbtree.delete_node(55);
-  rbtree.print_tree();
-  rbtree.delete_node(75);
-  rbtree.print_tree();
-  rbtree.delete_node(57);
-  rbtree.print_tree();
-  rbtree.delete_node(60);
-  rbtree.print_tree();
-  rbtree.delete_node(65);
-  rbtree.print_tree();
+template <typename U, typename V> void print(std::map<U, V> m) {
+  for (typename std::map<U, V>::iterator it = m.begin(); it != m.end(); ++it) {
+    std::cout << "key: " << it->first << ", value: " << it->second << std::endl;
+  }
+}
+
+int main(void) {
+  // RBTree	rbtree;
+  // rbtree.insert(55);
+  // rbtree.print_tree();
+  // rbtree.insert(40);
+  // rbtree.print_tree();
+  // rbtree.insert(65);
+  // rbtree.print_tree();
+  // rbtree.insert(60);
+  // rbtree.print_tree();
+  // rbtree.insert(75);
+  // rbtree.print_tree();
+  // rbtree.insert(57);
+  // rbtree.print_tree();
+  // rbtree.delete_node(40);
+  // rbtree.print_tree();
+  // rbtree.delete_node(55);
+  // rbtree.print_tree();
+  // rbtree.delete_node(75);
+  // rbtree.print_tree();
+  // rbtree.delete_node(57);
+  // rbtree.print_tree();
+  // rbtree.delete_node(60);
+  // rbtree.print_tree();
+  // rbtree.delete_node(65);
+  // rbtree.print_tree();
+  // for (size_t i = 1; i < 100; i++)
+  // {
+  //   rbtree.insert(i);
+  // }
+  //   rbtree.inorder();
+  std::map<int, int> m;
+  for (size_t i = 0; i < 50; i++) {
+    m.insert(std::make_pair(i, i));
+  }
+
+  for (std::map<int, int>::iterator it = m.begin(); it != m.end(); it++) {
+    std::cout << it->second << std::endl;
+  }
+
   return (0);
 }
