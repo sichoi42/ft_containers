@@ -109,7 +109,7 @@ template <typename NodePtr> NodePtr get_successor(NodePtr x, NodePtr nil) {
 // 선택한 노드의 왼쪽 서브트리 중 가장 큰 값을 가지는 노드를 반환한다.
 template <typename NodePtr> NodePtr get_predecessor(NodePtr x, NodePtr nil) {
   if (x->left != nil) {
-    return get_max_node(x->left, nill);
+    return get_max_node(x->left, nil);
   }
   // 선택한 노드의 왼쪽 자식이 없는 경우
   // 해당 노드가 서브 트리 내의 최솟값임을 의미하므로 서브 트리의 루트 노드를

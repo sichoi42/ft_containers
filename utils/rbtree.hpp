@@ -21,7 +21,8 @@ public:
   typedef tree_iterator<const value_type, node_type> const_iterator;
 
 private:
-  node_pointer _root;
+  node_pointer _begin;
+  node_pointer _end;
   node_pointer _nil;
   size_type _size;
   key_compare _comp;
@@ -31,7 +32,7 @@ private:
     node_pointer node = _alloc.allocate(1);
     _alloc.construct(node, value);
     node->color = RED;
-    node->parent = NULL;
+    node->parent = _nil;
     node->left = _nil;
     node->right = _nil;
     return node;
@@ -50,79 +51,168 @@ private:
     _destroy_node(node);
   }
 
-  node_pointer _search_tree(const value_type &value) {
-    node_pointer x = _root;
-    while (x != _nil) {
-      if (_comp(value, x->value)) {
-        x = x->left;
-      } else if (_comp(x->value, value)) {
-        x = x->right;
-      } else {
+  node_pointer _set_root(node_pointer x) {
+    _end->left = x;
+    x->parent = _end;
+  }
+
+  node_pointer _get_root() { return _end->left; }
+
+  void left_rotate(node_pointer x) {
+    node_pointer y = x->right;
+    // y의 왼쪽 서브트리를 x의 오른쪽 서브트리로 설정한다.
+    x->right = y->left;
+    // y가 왼쪽 서브트리를 가진다면, y의 왼쪽 서브트리의 부모를 x로 설정한다.
+    if (y->left != _nil) {
+      y->left->parent = x;
+    }
+    // y의 부모를 x의 부모로 설정한다.
+    y->parent = x->parent;
+    if (x->parent == _end) {
+      _set_root(y);
+    } else if (x == x->parent->left) {
+      x->parent->left = y;
+    } else { // x가 부모의 왼쪽 자식이라면
+      x->parent->right = y;
+    }
+    // x의 부모를 y로 설정한다.
+    // y의 왼쪽 서브트리를 x로 설정한다.
+    x->parent = y;
+    y->left = x;
+  }
+
+  void right_rotate(node_pointer x) {
+    node_pointer y = x->left;
+    // y의 오른쪽 서브트리를 x의 왼쪽 서브트리로 설정한다.
+    x->left = y->right;
+    // y가 오른쪽 서브트리를 가진다면, y의 오른쪽 서브트리의 부모를 x로
+    // 설정한다.
+    if (y->right != _nil) {
+      y->right->parent = x;
+    }
+    // y의 부모를 x의 부모로 설정한다.
+    y->parent = x->parent;
+    if (x->parent == _end) {
+      _set_root(y);
+    } else if (x == x->parent->right) {
+      x->parent->right = y;
+    } else { // x가 부모의 왼쪽 자식이라면
+      x->parent->left = y;
+    }
+    // x의 부모를 y로 설정한다.
+    // y의 오른쪽 서브트리를 x로 설정한다.
+    x->parent = y;
+    y->right = x;
+  }
+
+  void _insert_fixup(node_pointer node) {
+    // new node의 부모의 색깔이 레드인 동안 반복한다.
+    while (node->parent->color == RED) {
+      node_pointer gp = node->parent->parent;
+      // 부모가 조부모의 오른쪽 자식인 경우
+      if (node->parent == gp->left) {
+        // Case 1: 부모의 형제 노드가 레드인 경우
+        if (gp->right->color == RED) {
+          gp->right->color = BLACK;
+          gp->left->color = BLACK;
+          gp->color = RED;
+          node = gp;
+        }
+        // Case 2: new node가 부모의 오른쪽 자식인 경우
+        else if (node == node->parent->right) {
+          node = node->parent;
+          left_rotate(node);
+        } else {
+          // Case 3: new node가 부모의 왼쪽 자식인 경우
+          node->parent->color = BLACK;
+          gp->color = RED;
+          right_rotate(gp);
+        }
+      } else { // 부모가 조부모의 오른쪽 자식인 경우
+        if (gp->left->color == RED) {
+          gp->left->color = BLACK;
+          gp->right->color = BLACK;
+          gp->color = RED;
+          node = gp;
+        } else if (node == node->parent->left) {
+          node = node->parent;
+          right_rotate(node);
+        } else {
+          node->parent->color = BLACK;
+          gp->color = RED;
+          left_rotate(gp);
+        }
+      }
+      if (node == _get_root()) {
         break;
       }
     }
-    return x;
+    _get_root()->color = BLACK;
   }
 
-  // FIXME: search와 insert를 분리해야 함.
   node_pointer _insert_node(const value_type &value) {
-    node_pointer new_node = _new_node(value);
+    node_pointer new_node = new_node(value);
 
-    node_pointer y = NULL;
-    node_pointer x = _root;
+    node_pointer y = _end;
+    node_pointer x = _get_root();
+    // tree가 비어있는 경우이므로 root로 설정한다.
     if (x == _nil) {
       new_node->color = BLACK;
-      this->root = new_node;
-      return new_node;
-    }
-    // x는 leaf가 되고, y는 leaf의 부모 노드가 된다.
-    while (x != _nil) {
-      y = x;
-      if (new_node->value > x->value) {
-        x = x->right;
+      _set_root(new_node);
+    } else {
+      // x는 leaf가 되고, y는 leaf의 부모 노드가 된다.
+      while (x != _nil) {
+        y = x;
+        if (_comp(x->value, new_node->value)) {
+          x = x->right;
+        } else {
+          x = x->left;
+        }
+      }
+      new_node->parent = y;
+      if (_comp(y->value, new_node->value)) {
+        y->right = new_node;
       } else {
-        x = x->left;
+        y->left = new_node;
+      }
+      // 조부모 노드가 end인 경우 fixup이 필요 없다.
+      if (new_node->parent->parent != _end) {
+        _insert_fixup(new_node);
       }
     }
-    new_node->parent = y;
-    if (new_node->value > y->value) {
-      y->right = new_node;
-    } else {
-      y->left = new_node;
+    // 최솟값이 들어온 경우 begin을 갱신한다.
+    if (_begin == _end || _comp(new_node->value, _begin->value)) {
+      _begin = new_node;
     }
-    if (new_node->parent->parent == NULL) {
-      return;
-    }
-    insert_fixup(new_node);
+    ++_size;
     return new_node;
   }
 
-public:
-  // Constructor
-  rbtree(const key_compare &comp, const allocator_type &alloc)
+  _delete_node()
+
+      public :
+      // Constructor
+      rbtree(const key_compare &comp, const allocator_type &alloc)
       : _size(size_type()), _comp(comp), _alloc(alloc) {
-    _nil = _alloc.allocate(1);
-    _alloc.construct(_nil, value_type());
+    _nil = _new_node(value_type());
     _nil->color = BLACK;
-    _nil->parent = _nil;
-    _nil->left = NULL;
-    _nil->right = NULL;
-    _root = _new_node(value_type());
-    _root->color = BLACK;
+    _end = _new_node(value_type());
+    _end->color = BLACK;
+    _begin = _end;
   }
 
   // Destructor
   ~rbtree() {
-    _destroy_node_tree(_root);
+    _destroy_node_tree(_end);
     _destroy_node(_nil);
   }
 
   // Iterators
-  iterator begin() { return iterator(_root, _nil); }
-  const_iterator begin() const { return const_iterator(_root, _nil); }
+  iterator begin() { return iterator(_begin, _nil); }
+  const_iterator begin() const { return const_iterator(_begin, _nil); }
 
-  iterator end() { return iterator(_nil, _nil); }
-  const_iterator end() const { return const_iterator(_nil, _nil); }
+  iterator end() { return iterator(_end, _nil); }
+  const_iterator end() const { return const_iterator(_end, _nil); }
 
   // Capacity
   bool empty() const { return _size == 0; }
@@ -136,21 +226,51 @@ public:
 
   // 삽입에 성공하면 삽입된 요소의 iterator와 true를 pair로 반환
   // 삽입에 실패하면 이미 존재하는 요소의 iterator와 false를 pair로 반환
-  // TODO: _search_tree 구현
   ft::pair<iterator, bool> insert(const value_type &value) {
     node_pointer node = _search_tree(value);
-    if (node != _nil) {
-      return ft::make_pair(iterator(node, _nil), false);
+    if (node != _end) {
+      if (!_comp(node->value, value) && !_comp(value, node->value))
+        return ft::make_pair(iterator(node, _nil), false);
     }
     return ft::make_pair(iterator(_insert_node(value))), true);
   }
 
   // 삽입에 성공하면 삽입된 요소의 iterator
   // 혹은 이미 존재하는 요소의 iterator를 반환
-  iterator insert(iterator pos, const value_type &value);
+  iterator insert(iterator pos, const value_type &value) {
+    node_pointer node = _search_tree(value, pos.base());
+    if (node != _nil) {
+      return ft::make_pair(iterator(node, _nil), false);
+    }
+    return ft::make_pair(iterator(_insert_node(value))), true);
+  }
 
   template <typename InputIterator>
-  void insert(InputIterator first, InputIterator last);
+  void insert(InputIterator first, InputIterator last) {
+    while (first != last) {
+      insert(*first);
+      ++first;
+    }
+  }
+
+  iterator erase(iterator pos) {
+    iterator tmp(pos);
+    ++tmp;
+    if (pos.base() == _begin) {
+      _begin = tmp.base();
+    }
+    --_size;
+    _delete_node(pos->base());
+    return tmp;
+  }
+
+  size_type erase(const key_type &key) {}
+
+  void erase(iterator first, iterator last) {
+    while (first != last) {
+      first = erase(*first);
+    }
+  }
 };
 
 } // namespace ft
