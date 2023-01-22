@@ -58,6 +58,29 @@ private:
 
   node_pointer _get_root() { return _end->left; }
 
+  // u: 기증자, v: 수취자
+  // u의 부모와 v의 부모를 연결한다.
+  void _transplant(node_pointer u, node_pointer v) {
+    // u가 root인 경우, v를 root로 만든다.
+    if (u->parent == _end) {
+      _set_root(v);
+    } else if (u == u->parent->left) {
+      // u가 부모의 왼쪽 자식인 경우, v를 u의 부모의 왼쪽 자식으로 만든다.
+      u->parent->left = v;
+    } else {
+      // u가 부모의 오른쪽 자식인 경우, v를 u의 부모의 오른쪽 자식으로 만든다.
+      u->parent->right = v;
+    }
+    // v의 부모를 u의 부모로 만든다.
+    v->parent = u->parent;
+  }
+
+  void _swap_color(node_pointer u, node_pointer v) {
+    Color tmp = u->color;
+    u->color = v->color;
+    v->color = tmp;
+  }
+
   node_pointer _search_tree(const key_type &key) const {
     node_pointer node = _get_root();
     while (node != _nil) {
@@ -106,7 +129,7 @@ private:
     return parent;
   }
 
-  void left_rotate(node_pointer x) {
+  void _left_rotate(node_pointer x) {
     node_pointer y = x->right;
     // y의 왼쪽 서브트리를 x의 오른쪽 서브트리로 설정한다.
     x->right = y->left;
@@ -129,7 +152,7 @@ private:
     y->left = x;
   }
 
-  void right_rotate(node_pointer x) {
+  void _right_rotate(node_pointer x) {
     node_pointer y = x->left;
     // y의 오른쪽 서브트리를 x의 왼쪽 서브트리로 설정한다.
     x->left = y->right;
@@ -169,12 +192,12 @@ private:
         // Case 2: new node가 부모의 오른쪽 자식인 경우
         else if (node == node->parent->right) {
           node = node->parent;
-          left_rotate(node);
+          _left_rotate(node);
         } else {
           // Case 3: new node가 부모의 왼쪽 자식인 경우
           node->parent->color = BLACK;
           gp->color = RED;
-          right_rotate(gp);
+          _right_rotate(gp);
         }
       } else { // 부모가 조부모의 오른쪽 자식인 경우
         if (gp->left->color == RED) {
@@ -184,11 +207,11 @@ private:
           node = gp;
         } else if (node == node->parent->left) {
           node = node->parent;
-          right_rotate(node);
+          _right_rotate(node);
         } else {
           node->parent->color = BLACK;
           gp->color = RED;
-          left_rotate(gp);
+          _left_rotate(gp);
         }
       }
       if (node == _get_root()) {
@@ -198,7 +221,6 @@ private:
     _get_root()->color = BLACK;
   }
 
-  // TODO: left 먼저 확인하도록 수정
   node_pointer _insert_node(const value_type &value, node_pointer &parent) {
     node_pointer new_node = new_node(value);
     if (parent == _end) {
@@ -217,7 +239,127 @@ private:
     return new_node;
   }
 
-  _delete_node() {}
+  void _delete_fixup_left(node_pointer &x) {
+    node_pointer s = x->parent->right;
+    // Case-1: x의 형제 노드 s가 레드인 경우
+    if (s->color == RED) {
+      _swap_color(s, x->parent);
+      _left_rotate(x->parent);
+      s = x->parent->right;
+    }
+    // Case-2: s의 자식 노드가 모두 블랙인 경우
+    // x는 doubly black이므로 x의 블랙과 s의 블랙을 부모에게 전가한다.
+    if (s->left->color == BLACK && s->right->color == BLACK) {
+      s->color = RED;
+      // x의 부모가 red and black이거나 doubly black이면서 root노드인 경우
+      // 블랙으로 바꾸면 상황 종료
+      if (x->parent->color == RED || x->parent == _get_root()) {
+        x->parent->color = BLACK;
+        x = _get_root();
+      } else {
+        // 그렇지 않으면 기준을 부모로 올려서 다시 검사
+        x = x->parent;
+      }
+    } else {
+      // Case-3: s의 오른쪽 자식만 블랙인 경우
+      if (s->right->color == BLACK) {
+        _swap_color(s, s->left);
+        _right_rotate(s);
+        s = x->parent->right;
+      }
+      // Case-4: s의 왼쪽 자식만 블랙인 경우
+      s->color = x->parent->color;
+      x->parent->color = BLACK;
+      s->right->color = BLACK;
+      _left_rotate(x->parent);
+      x = _get_root();
+    }
+  }
+
+  void _delete_fixup_right(node_pointer &x) {
+    node_pointer s = x->parent->left;
+    // Case-1: x의 형제 노드 s가 레드인 경우
+    if (s->color == RED) {
+      _swap_color(s, x->parent);
+      _right_rotate(x->parent);
+      s = x->parent->left;
+    }
+    // Case-2: s의 자식 노드가 모두 블랙인 경우
+    // x는 doubly black이므로 x의 블랙과 s의 블랙을 부모에게 전가한다.
+    if (s->left->color == BLACK && s->right->color == BLACK) {
+      s->color = RED;
+      // x의 부모가 red and black이거나 doubly black이면서 root노드인 경우
+      // 블랙으로 바꾸면 상황 종료
+      if (x->parent->color == RED || x->parent == _get_root()) {
+        x->parent->color = BLACK;
+        x = _get_root();
+      } else {
+        // 그렇지 않으면 기준을 부모로 올려서 다시 검사
+        x = x->parent;
+      }
+    } else {
+      // Case-3: s의 왼쪽 자식만 블랙인 경우
+      if (s->left->color == BLACK) {
+        _swap_color(s, s->right);
+        _left_rotate(s);
+        s = x->parent->left;
+      }
+      // Case-4: s의 오른쪽 자식만 블랙인 경우
+      s->color = x->parent->color;
+      x->parent->color = BLACK;
+      s->left->color = BLACK;
+      _right_rotate(x->parent);
+      x = _get_root();
+    }
+  }
+
+  // Balancing RBTree after deletion
+  void _delete_fixup(node_pointer x) {
+    node_pointer root = _get_root();
+    while (x != root && x->color == BLACK) {
+      if (x == x->parent->left) {
+        _delete_fixup_left(x);
+      } else {
+        _delete_fixup_right(x);
+      }
+    }
+    x->color = BLACK;
+  }
+
+  void _delete_node(node_pointer target) {
+    Color origin_color = target->color;
+    node_pointer x;
+    // target의 왼쪽 자식이 nil이라면, target을 target의 오른쪽 자식으로
+    // 이식한다.
+    if (target->left == _nil) {
+      x = target->right;
+      _transplant(target, x);
+    } else if (target->right == _nil) {
+      // target의 오른쪽 자식이 nil이라면, target을 target의 왼쪽 자식으로
+      // 이식한다.
+      x = target->left;
+      _transplant(target, x);
+    } else { // 자식 둘 다 nil이 아니라면
+      node_pointer y = ft::get_successor(target);
+      origin_color = y->color;
+      x = y->right;
+      if (y->parent == target) {
+        x->parent = y;
+      } else {
+        _transplant(y, x);
+        y->right = target->right;
+        y->right->parent = y;
+      }
+      _transplant(target, y);
+      y->left = target->left;
+      y->left->parent = y;
+      y->color = target->color;
+    }
+    _destroy_node(target);
+    if (origin_color == BLACK) {
+      _delete_fixup(x);
+    }
+  }
 
 public:
   // Constructor
@@ -251,7 +393,7 @@ public:
   size_type max_size() const { return _alloc.max_size(); }
 
   // Modifiers
-  void clear();
+  void clear() {}
 
   // 삽입에 성공하면 삽입된 요소의 iterator와 true를 pair로 반환
   // 삽입에 실패하면 이미 존재하는 요소의 iterator와 false를 pair로 반환
@@ -311,12 +453,13 @@ public:
 
   iterator find(const key_type &key) {
     node_pointer node = _search_tree(key);
-    if (node == _nil) {
-      return iterator(_nil, _nil);
-    }
+    return iterator(node, _nil);
   }
 
-  const_iterator find(const key_type &key) const {}
+  const_iterator find(const key_type &key) const {
+    node_pointer node = _search_tree(key);
+    return iterator(node, _nil);
+  }
 };
 
 } // namespace ft

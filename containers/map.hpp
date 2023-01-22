@@ -28,14 +28,6 @@ public:
   typedef typename allocator_type::reference reference;
   typedef typename allocator_type::const_reference const_reference;
 
-  // FIXME: implement rbtree
-  typedef typename rbtree<value_type, key_type, value_compare,
-                          allocator_type>::iterator iterator;
-  typedef typename rbtree<value_type, key_type, value_compare,
-                          allocator_type>::const_iterator const_iterator;
-  typedef ft::reverse_iterator<iterator> reverse_iterator;
-  typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
-
   class value_compare
       : public std::binary_function<value_type, value_type, bool> {
   protected:
@@ -55,6 +47,13 @@ public:
       return comp(x, y.first);
     };
   };
+
+  typedef typename rbtree<value_type, key_type, value_compare,
+                          allocator_type>::iterator iterator;
+  typedef typename rbtree<value_type, key_type, value_compare,
+                          allocator_type>::const_iterator const_iterator;
+  typedef ft::reverse_iterator<iterator> reverse_iterator;
+  typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
 private:
   rbtree<value_type, key_type, key_compare, allocator_type> _tree;
