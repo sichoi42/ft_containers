@@ -480,9 +480,9 @@ int main(void) {
   for (size_t i = 0; i < 50; i++) {
     m.insert(std::make_pair(i, i));
   }
-  std::map<int, int>::iterator it;
-  it = m.begin();
-  std::cout << it->second << std::endl;
+  std::map<int, int>::const_iterator it = --m.end();
+
+  std::cout << m.insert(it, std::make_pair(49, 49))->second << std::endl;
 
   return (0);
 }
