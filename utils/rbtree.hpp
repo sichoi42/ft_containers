@@ -376,7 +376,7 @@ private:
     return target;
   }
 
-  // 해당 키보다 작거나 같은 첫번째 요소를 반환
+  // 해당 키보다 큰 첫번째 요소를 반환
   node_pointer _get_upper_bound(const key_type &key) {
     node_pointer node = _get_root();
     node_pointer target = _end;
@@ -402,6 +402,28 @@ public:
     _begin = _end;
   }
 
+  // Copy Constructor
+  rbtree(const rbtree &rb) {
+    if (this != &rb) {
+      *this = rb;
+    }
+  }
+
+  rbtree &operator=(const rbtree &rb) {
+    if (this != &rb) {
+      _size = rb._size;
+      _comp = rb._comp;
+      _alloc = rb._alloc;
+      _nil = _new_node(value_type());
+      _nil->color = BLACK;
+      _end = _new_node(value_type());
+      _end->color = BLACK;
+      _begin = _end;
+      insert(rb.begin(), rb.end());
+    }
+    return *this;
+  }
+
   // Destructor
   ~rbtree() {
     _destroy_node_tree(_end);
@@ -423,8 +445,7 @@ public:
   size_type max_size() const { return _alloc.max_size(); }
 
   // Modifiers
-  // TODO:
-  void clear() {}
+  void clear() { erase(begin(), end()); }
 
   // 삽입에 성공하면 삽입된 요소의 iterator와 true를 pair로 반환
   // 삽입에 실패하면 이미 존재하는 요소의 iterator와 false를 pair로 반환
@@ -482,6 +503,15 @@ public:
     }
   }
 
+  void swap(rbtree &rb) {
+    std::swap(_begin, rb._begin);
+    std::swap(_end, rb._end);
+    std::swap(_nil, rb._nil);
+    std::swap(_size, rb._size);
+    std::swap(_comp, rb._comp);
+    std::swap(_alloc, rb._alloc);
+  }
+
   iterator find(const key_type &key) {
     node_pointer node = _search_tree(key);
     return iterator(node, _nil);
@@ -502,18 +532,26 @@ public:
     return const_iterator(_get_lower_bound(key), _nil);
   }
 
-  // 해당 키보다 작거나 같은 첫번째 요소의 iterator를 반환
-  iterator upper_bound(const key_type &key);
+  // 해당 키보다 큰 첫번째 요소의 iterator 반환
+  iterator upper_bound(const key_type &key) {
+    return iterator(_get_upper_bound(key), _nil);
+  }
 
-  // 해당 키보다 작거나 같은 첫번째 요소의 const_iterator를 반환
-  const_iterator upper_bound(const key_type &key) const;
+  // 해당 키보다 큰 첫번째 요소의 const_iterator 반환
+  const_iterator upper_bound(const key_type &key) const {
+    return const_iterator(_get_upper_bound(key), _nil);
+  }
 
   // first로 lower_bound, second로 upper_bound를 반환
-  ft::pair<iterator, iterator> equal_range(const key_type &key);
+  ft::pair<iterator, iterator> equal_range(const key_type &key) {
+    return ft::make_pair(lower_bound(key), upper_bound(key));
+  }
 
   // first로 const lower_bound, second로 const upper_bound를 반환
   ft::pair<const_iterator, const_iterator>
-  equal_range(const key_type &key) const;
+  equal_range(const key_type &key) const {
+    return ft::make_pair(lower_bound(key), upper_bound(key));
+  }
 };
 
 } // namespace ft

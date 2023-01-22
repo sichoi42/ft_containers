@@ -85,13 +85,12 @@ public:
   ~map() {}
 
   // Copy Assignment Operator
-  // FIXME: 아래 코드는 잘못된 코드임. 수정 필요
   map &operator=(const map &m) {
     if (this != &m) {
       _key_comp = m._key_comp;
       _value_comp = m._value_comp;
       _alloc = m._alloc;
-      _tree = _alloc.allocate(m._tree.size());
+      _tree = m._tree;
     }
     return *this;
   }
@@ -113,14 +112,9 @@ public:
     return it->second;
   }
 
-  // TODO: 개선 필요
   mapped_type &operator[](const key_type &key) {
-    iterator it = find(key);
-    if (it != end()) {
-      return it->second;
-    }
-    it = insert(ft::make_pair(key, mapped_type())).first;
-    return it->second;
+    ft::pair<iterator, bool> p = ft::make_pair(key, mapped_type());
+    return p->first;
   }
 
   // Iterators
@@ -149,8 +143,7 @@ public:
   // Modifiers
 
   // erase all elements
-  // TODO:
-  void clear();
+  void clear() { _tree.clear(); }
 
   // 삽입에 성공하면 삽입된 요소의 iterator와 true를 pair로 반환
   // 삽입에 실패하면 이미 존재하는 요소의 iterator와 false를 pair로 반환
@@ -178,8 +171,12 @@ public:
 
   void erase(iterator first, iterator last) { _tree.erase(first, last); }
 
-  // TODO:
-  void swap(map &x);
+  void swap(map &x) {
+    _tree.swap(x._tree);
+    std::swap(_key_comp, x._key_comp);
+    std::swap(_value_comp, x._value_comp);
+    std::swap(_alloc, x._alloc);
+  }
 
   // Lookup
 
@@ -202,10 +199,10 @@ public:
     return _tree.lower_bound(key);
   }
 
-  // 해당 키보다 작거나 같은 첫번째 요소의 iterator를 반환
+  // 해당 키보다 큰 첫번째 요소의 iterator 반환
   iterator upper_bound(const key_type &key) { return _tree.upper_bound(key); }
 
-  // 해당 키보다 작거나 같은 첫번째 요소의 const_iterator를 반환
+  // 해당 키보다 큰 첫번째 요소의 const_iterator를 반환
   const_iterator upper_bound(const key_type &key) const {
     return _tree.upper_bound(key);
   }

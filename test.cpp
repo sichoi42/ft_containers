@@ -492,7 +492,17 @@ int main(void) {
     std::cout << it->first << " ";
   }
   std::cout << std::endl;
-  std::cout << m.lower_bound(43)->first << std::endl;
+
+  std::map<int, int> m2;
+
+  m2 = m;
+
+  m2.insert(std::make_pair(100, 100));
+
+  for (std::map<int, int>::iterator it = m.begin(); it != m.end(); ++it) {
+    std::cout << it->first << " ";
+  }
+  std::cout << std::endl;
 
   return (0);
 }
