@@ -445,6 +445,8 @@ template <typename U, typename V> void print(std::map<U, V> m) {
   }
 }
 
+#include "./containers/map.hpp"
+
 int main(void) {
   // RBTree	rbtree;
   // rbtree.insert(55);
@@ -476,33 +478,34 @@ int main(void) {
   //   rbtree.insert(i);
   // }
   //   rbtree.inorder();
-  std::map<int, int> m;
-  m[50] = 50;
-  m[40] = 40;
-  m[60] = 60;
-  m[55] = 55;
-  m[65] = 65;
-  m[30] = 30;
-  m[45] = 45;
-  m[25] = 25;
-  m[35] = 35;
-  m[43] = 43;
-  m[47] = 47;
-  for (std::map<int, int>::iterator it = m.begin(); it != m.end(); ++it) {
-    std::cout << it->first << " ";
-  }
-  std::cout << std::endl;
+  // std::map<int, int> m;
+  // m[50] = 50;
+  // m[40] = 40;
+  // m[60] = 60;
+  // m[55] = 55;
+  // m[65] = 65;
+  // m[30] = 30;
+  // m[45] = 45;
+  // m[25] = 25;
+  // m[35] = 35;
+  // m[43] = 43;
+  // m[47] = 47;
+  // for (std::map<int, int>::iterator it = m.begin(); it != m.end(); ++it) {
+  //   std::cout << it->first << " ";
+  // }
+  // std::cout << std::endl;
 
-  std::map<int, int> m2;
+  // std::map<int, int> m2;
 
-  m2 = m;
+  // m2 = m;
 
-  m2.insert(std::make_pair(100, 100));
+  // m2.insert(std::make_pair(100, 100));
 
-  for (std::map<int, int>::iterator it = m.begin(); it != m.end(); ++it) {
-    std::cout << it->first << " ";
-  }
-  std::cout << std::endl;
+  // for (std::map<int, int>::iterator it = m.begin(); it != m.end(); ++it) {
+  //   std::cout << it->first << " ";
+  // }
+  // std::cout << std::endl;
 
+  ft::map<int, int> m;
   return (0);
 }

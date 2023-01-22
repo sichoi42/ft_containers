@@ -9,13 +9,16 @@ class rbtree {
 public:
   typedef T value_type; // ft::pair<U, V> of map
   typedef Key key_type; // U of map
-  typedef Compare key_compare;
-  typedef Allocator allocator_type;
+  typedef Compare value_compare;
   typedef std::size_t size_type;
   typedef std::ptrdiff_t difference_type;
 
   typedef Node<value_type> node_type;
   typedef node_type *node_pointer;
+
+  typedef Allocator allocator_type;
+  typedef typename allocator_type::template rebind<node_type>::other node_allocator;
+  typedef std::allocator_traits<node_allocator> node_traits;
 
   typedef tree_iterator<value_type, node_type> iterator;
   typedef tree_iterator<const value_type, node_type> const_iterator;
@@ -25,8 +28,8 @@ private:
   node_pointer _end;
   node_pointer _nil;
   size_type _size;
-  key_compare _comp;
-  allocator_type _alloc;
+  value_compare _comp;
+  node_allocator _alloc;
 
   node_pointer _new_node(const value_type &value) {
     node_pointer node = _alloc.allocate(1);
@@ -393,7 +396,7 @@ private:
 
 public:
   // Constructor
-  rbtree(const key_compare &comp, const allocator_type &alloc)
+  rbtree(const value_compare &comp, const allocator_type &alloc)
       : _size(size_type()), _comp(comp), _alloc(alloc) {
     _nil = _new_node(value_type());
     _nil->color = BLACK;
@@ -455,7 +458,7 @@ public:
       if (!_comp(parent->value, value) && !_comp(value, parent->value))
         return ft::make_pair(iterator(parent, _nil), false);
     }
-    return ft::make_pair(iterator(_insert_node(value, parent))), true);
+    return ft::make_pair(iterator(_insert_node(value, parent)), true);
   }
 
   // 삽입에 성공하면 삽입된 요소의 iterator

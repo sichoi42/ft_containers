@@ -1,23 +1,25 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include "./implements/equal.hpp"
-#include "./implements/lexicographical_compare.hpp"
-#include "./implements/pair.hpp"
-#include "./implements/reverse_iterator.hpp"
-#include "./utils/rbtree.hpp"
+#include "../implements/equal.hpp"
+#include "../implements/lexicographical_compare.hpp"
+#include "../implements/pair.hpp"
+#include "../implements/reverse_iterator.hpp"
+#include "../implements/enable_if.hpp"
+#include "../implements/is_integral.hpp"
+#include "../utils/rbtree.hpp"
 #include <exception>
 #include <functional>
 #include <memory>
 
 namespace ft {
 template <typename U, typename V, typename Compare = std::less<U>,
-          typename Allocator = std::allocator<std::pair<const U, V>>>
+          typename Allocator = std::allocator<ft::pair<const U, V> > >
 class map {
 public:
   typedef U key_type;
   typedef V mapped_type; // type of value of pair
-  typedef ft::pair<U, V> value_type;
+  typedef ft::pair<const U, V> value_type;
   typedef std::size_t size_type;
   typedef std::ptrdiff_t difference_type;
   typedef Compare key_compare;
@@ -40,39 +42,43 @@ public:
     bool operator()(const value_type &x, const value_type &y) const {
       return comp(x.first, y.first);
     }
-    bool operator()(const value_type &x, const value_type &y) const {
+    bool operator()(const value_type &x, const key_type &y) const {
       return comp(x.first, y);
     }
-    bool operator()(const value_type &x, const value_type &y) const {
+    bool operator()(const key_type &x, const value_type &y) const {
       return comp(x, y.first);
     };
   };
 
-  typedef typename rbtree<value_type, key_type, value_compare,
-                          allocator_type>::iterator iterator;
-  typedef typename rbtree<value_type, key_type, value_compare,
-                          allocator_type>::const_iterator const_iterator;
+  // typedef typename rbtree<value_type, key_type, value_compare,
+  //                         allocator_type>::iterator iterator;
+  // typedef typename rbtree<value_type, key_type, value_compare,
+  //                         allocator_type>::const_iterator const_iterator;
+  // typedef ft::reverse_iterator<iterator> reverse_iterator;
+  // typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+
+  typedef typename ft::rbtree<value_type, key_type, value_compare, allocator_type>::iterator iterator;
+  typedef typename ft::rbtree<value_type, key_type, value_compare, allocator_type>::const_iterator const_iterator;
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
 private:
-  rbtree<value_type, key_type, key_compare, allocator_type> _tree;
+  ft::rbtree<value_type, key_type, value_compare, allocator_type> _tree;
   key_compare _key_comp;
-  value_compare _value_comp;
-  allocator_type _alloc;
+  const value_compare _value_comp;
 
 public:
   // Constructor
   explicit map(const key_compare &key_comp = key_compare(),
                const allocator_type &alloc = allocator_type())
-      : _key_comp(key_comp), _value_comp(key_comp), _alloc(alloc), _tree() {}
+      : _key_comp(key_comp), _value_comp(key_comp), _tree(_value_comp, alloc) {}
 
-  // FIXME: need enable_if
   template <typename InputIterator>
   map(InputIterator first, InputIterator last,
       const key_compare &key_comp = key_compare(),
-      const allocator_type &alloc = allocator_type())
-      : _key_comp(key_comp), _value_comp(key_comp), _alloc(alloc), _tree() {}
+      const allocator_type &alloc = allocator_type(),
+      typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = NULL)
+      : _key_comp(key_comp), _value_comp(key_comp), _tree(_value_comp, alloc) {}
 
   // Copy Constructor
   map(const map &m) {
@@ -89,7 +95,6 @@ public:
     if (this != &m) {
       _key_comp = m._key_comp;
       _value_comp = m._value_comp;
-      _alloc = m._alloc;
       _tree = m._tree;
     }
     return *this;
@@ -160,8 +165,7 @@ public:
   template <typename InputIterator>
   void insert(
       InputIterator first, InputIterator last,
-      typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * =
-          NULL) {
+      typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = NULL) {
     return _tree.insert(first, last);
   }
 
@@ -175,7 +179,6 @@ public:
     _tree.swap(x._tree);
     std::swap(_key_comp, x._key_comp);
     std::swap(_value_comp, x._value_comp);
-    std::swap(_alloc, x._alloc);
   }
 
   // Lookup

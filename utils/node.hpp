@@ -9,7 +9,7 @@
 namespace ft {
 enum Color { RED, BLACK };
 
-template <typename T> struct Node {
+template <typename T> class Node {
   typedef T value_type;
 
   value_type value;
@@ -17,6 +17,8 @@ template <typename T> struct Node {
   Node *right;
   Node *parent;
   Color color;
+
+  Node() : parent(NULL), left(NULL), right(NULL), value(value_type()), color(BLACK) {}
 };
 
 // Non-member function for node
