@@ -477,12 +477,22 @@ int main(void) {
   // }
   //   rbtree.inorder();
   std::map<int, int> m;
-  for (size_t i = 0; i < 50; i++) {
-    m.insert(std::make_pair(i, i));
+  m[50] = 50;
+  m[40] = 40;
+  m[60] = 60;
+  m[55] = 55;
+  m[65] = 65;
+  m[30] = 30;
+  m[45] = 45;
+  m[25] = 25;
+  m[35] = 35;
+  m[43] = 43;
+  m[47] = 47;
+  for (std::map<int, int>::iterator it = m.begin(); it != m.end(); ++it) {
+    std::cout << it->first << " ";
   }
-  std::map<int, int>::const_iterator it = --m.end();
-
-  std::cout << m.insert(it, std::make_pair(49, 49))->second << std::endl;
+  std::cout << std::endl;
+  std::cout << m.lower_bound(43)->first << std::endl;
 
   return (0);
 }

@@ -361,6 +361,36 @@ private:
     }
   }
 
+  // 해당 키보다 크거나 같은 첫번째 요소를 반환
+  node_pointer _get_lower_bound(const key_type &key) {
+    node_pointer node = _get_root();
+    node_pointer target = _end;
+    while (node != _nil) {
+      if (!_comp(node->value, key)) {
+        target = node;
+        node = node->left;
+      } else {
+        node = node->right;
+      }
+    }
+    return target;
+  }
+
+  // 해당 키보다 작거나 같은 첫번째 요소를 반환
+  node_pointer _get_upper_bound(const key_type &key) {
+    node_pointer node = _get_root();
+    node_pointer target = _end;
+    while (node != _nil) {
+      if (_comp(key, node->value)) {
+        target = node;
+        node = node->left;
+      } else {
+        node = node->right;
+      }
+    }
+    return target;
+  }
+
 public:
   // Constructor
   rbtree(const key_compare &comp, const allocator_type &alloc)
@@ -393,6 +423,7 @@ public:
   size_type max_size() const { return _alloc.max_size(); }
 
   // Modifiers
+  // TODO:
   void clear() {}
 
   // 삽입에 성공하면 삽입된 요소의 iterator와 true를 pair로 반환
@@ -460,6 +491,29 @@ public:
     node_pointer node = _search_tree(key);
     return iterator(node, _nil);
   }
+
+  // 해당 키보다 크거나 같은 첫번째 요소의 iterator를 반환
+  iterator lower_bound(const key_type &key) {
+    return iterator(_get_lower_bound(key), _nil);
+  }
+
+  // 해당 키보다 크거나 같은 첫번째 요소의 const_iterator를 반환
+  const_iterator lower_bound(const key_type &key) const {
+    return const_iterator(_get_lower_bound(key), _nil);
+  }
+
+  // 해당 키보다 작거나 같은 첫번째 요소의 iterator를 반환
+  iterator upper_bound(const key_type &key);
+
+  // 해당 키보다 작거나 같은 첫번째 요소의 const_iterator를 반환
+  const_iterator upper_bound(const key_type &key) const;
+
+  // first로 lower_bound, second로 upper_bound를 반환
+  ft::pair<iterator, iterator> equal_range(const key_type &key);
+
+  // first로 const lower_bound, second로 const upper_bound를 반환
+  ft::pair<const_iterator, const_iterator>
+  equal_range(const key_type &key) const;
 };
 
 } // namespace ft

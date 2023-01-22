@@ -138,43 +138,55 @@ public:
   // Capacity
 
   // container is empty
-  bool empty() const;
+  bool empty() const { return _tree.empty(); }
 
   // get number of elements
-  size_type size() const;
+  size_type size() const { return _tree.size(); }
 
   // get max number of elements
-  size_type max_size() const;
+  size_type max_size() const { return _tree.max_size(); }
 
   // Modifiers
 
   // erase all elements
+  // TODO:
   void clear();
 
   // 삽입에 성공하면 삽입된 요소의 iterator와 true를 pair로 반환
   // 삽입에 실패하면 이미 존재하는 요소의 iterator와 false를 pair로 반환
-  ft::pair<iterator, bool> insert(const value_type &value);
+  ft::pair<iterator, bool> insert(const value_type &value) {
+    return _tree.insert(value);
+  }
 
   // 삽입에 성공하면 삽입된 요소의 iterator
   // 혹은 이미 존재하는 요소의 iterator를 반환
-  iterator insert(iterator pos, const value_type &value);
+  iterator insert(iterator pos, const value_type &value) {
+    return _tree.insert(pos, value);
+  }
 
-  // FIXME: need enable_if
   template <typename InputIterator>
-  void insert(InputIterator first, InputIterator last);
+  void insert(
+      InputIterator first, InputIterator last,
+      typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * =
+          NULL) {
+    return _tree.insert(first, last);
+  }
 
-  void erase(iterator pos);
+  void erase(iterator pos) { _tree.erase(pos); }
 
-  void erase(iterator first, iterator last);
+  size_type erase(const key_type &key) { return _tree.erase(key); }
 
+  void erase(iterator first, iterator last) { _tree.erase(first, last); }
+
+  // TODO:
   void swap(map &x);
 
   // Lookup
 
   // find element with key equivalent to key
-  iterator find(const key_type &key);
+  iterator find(const key_type &key) { return _tree.find(key); }
 
-  const_iterator find(const key_type &key) const;
+  const_iterator find(const key_type &key) const { return _tree.find(key); }
 
   // count elements with key equivalent to key
   // NOTE: map은 key가 unique하기 때문에 0 또는 1을 반환
@@ -183,23 +195,31 @@ public:
   }
 
   // 해당 키보다 크거나 같은 첫번째 요소의 iterator를 반환
-  iterator lower_bound(const key_type &key);
+  iterator lower_bound(const key_type &key) { return _tree.lower_bound(key); }
 
   // 해당 키보다 크거나 같은 첫번째 요소의 const_iterator를 반환
-  const_iterator lower_bound(const key_type &key) const;
+  const_iterator lower_bound(const key_type &key) const {
+    return _tree.lower_bound(key);
+  }
 
   // 해당 키보다 작거나 같은 첫번째 요소의 iterator를 반환
-  iterator upper_bound(const key_type &key);
+  iterator upper_bound(const key_type &key) { return _tree.upper_bound(key); }
 
   // 해당 키보다 작거나 같은 첫번째 요소의 const_iterator를 반환
-  const_iterator upper_bound(const key_type &key) const;
+  const_iterator upper_bound(const key_type &key) const {
+    return _tree.upper_bound(key);
+  }
 
   // first로 lower_bound, second로 upper_bound를 반환
-  ft::pair<iterator, iterator> equal_range(const key_type &key);
+  ft::pair<iterator, iterator> equal_range(const key_type &key) {
+    return _tree.equal_range(key);
+  }
 
   // first로 const lower_bound, second로 const upper_bound를 반환
   ft::pair<const_iterator, const_iterator>
-  equal_range(const key_type &key) const;
+  equal_range(const key_type &key) const {
+    return _tree.equal_range(key);
+  }
 
   // Observers
 
