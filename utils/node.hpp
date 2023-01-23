@@ -13,10 +13,10 @@ template <typename T> class Node {
   typedef T value_type;
 
   public:
-  value_type value;
+  Node *parent;
   Node *left;
   Node *right;
-  Node *parent;
+  value_type value;
   Color color;
 
   Node() : parent(NULL), left(NULL), right(NULL), value(value_type()), color(BLACK) {}

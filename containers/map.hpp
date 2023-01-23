@@ -63,9 +63,9 @@ public:
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
 private:
-  ft::rbtree<value_type, key_type, value_compare, allocator_type> _tree;
   key_compare _key_comp;
   value_compare _value_comp;
+  ft::rbtree<value_type, key_type, value_compare, allocator_type> _tree;
 
 public:
   // Constructor
@@ -83,11 +83,10 @@ public:
       }
 
   // Copy Constructor
-  map(const map &m) {
-    if (this != &m) {
-      *this = m;
-    }
-  }
+  map(const map& m)
+    : _key_comp(m._key_comp),
+      _value_comp(m._value_comp),
+      _tree(m._tree) {}
 
   // Destructor
   ~map() {}

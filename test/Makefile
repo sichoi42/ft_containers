@@ -1,8 +1,8 @@
 NAME			= simple_test
 
-CPP				= clang++
-CXXFLAGS	= -Wall -Wextra -std=c++98
-INC = -I ../containers -I ../implements -I ../utils -I ./vector/utils ./map/utils
+CPP				= c++
+CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
+INC = -I ../containers -I ../implements -I ../utils -I ./vector/utils -I ./map/utils
 
 GREEN = \033[0;32m
 RED = \033[0;31m

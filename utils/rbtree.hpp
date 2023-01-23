@@ -343,7 +343,7 @@ private:
       x = target->left;
       _transplant(target, x);
     } else { // 자식 둘 다 nil이 아니라면
-      node_pointer y = ft::get_successor(target);
+      node_pointer y = ft::get_successor(target, _nil);
       origin_color = y->color;
       x = y->right;
       if (y->parent == target) {
@@ -406,23 +406,19 @@ public:
   }
 
   // Copy Constructor
-  rbtree(const rbtree &rb) {
-    if (this != &rb) {
-      *this = rb;
-    }
-  }
-
-  rbtree &operator=(const rbtree &rb) {
-    if (this != &rb) {
-      _size = rb._size;
-      _comp = rb._comp;
-      _alloc = rb._alloc;
+  rbtree(const rbtree &rb) : _size(size_type()), _comp(rb._comp), _alloc(rb._alloc) {
       _nil = _new_node(value_type());
       _nil->color = BLACK;
       _end = _new_node(value_type());
       _end->color = BLACK;
       _begin = _end;
       insert(rb.begin(), rb.end());
+  }
+
+  rbtree &operator=(const rbtree &rb){
+    if (this != &rb) {
+      rbtree tmp(rb);
+      swap(tmp);
     }
     return *this;
   }
@@ -483,11 +479,11 @@ public:
   iterator erase(iterator pos) {
     iterator tmp(pos);
     ++tmp;
-    if (pos.base() == _begin) {
+    if (pos == begin()) {
       _begin = tmp.base();
     }
     --_size;
-    _delete_node(pos->base());
+    _delete_node(pos.base());
     return tmp;
   }
 
@@ -502,7 +498,7 @@ public:
 
   void erase(iterator first, iterator last) {
     while (first != last) {
-      first = erase(*first);
+      first = erase(first);
     }
   }
 
