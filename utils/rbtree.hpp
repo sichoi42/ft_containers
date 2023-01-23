@@ -59,7 +59,7 @@ private:
     x->parent = _end;
   }
 
-  node_pointer _get_root() { return _end->left; }
+  node_pointer _get_root() const { return _end->left; }
 
   // u: 기증자, v: 수취자
   // u의 부모와 v의 부모를 연결한다.
@@ -492,7 +492,7 @@ public:
     if (target == _nil) {
       return 0;
     }
-    erase(target);
+    erase(iterator(target, _nil));
     return 1;
   }
 

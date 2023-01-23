@@ -9,7 +9,7 @@ RED = \033[0;31m
 RESET = \033[0m
 CHECK = \033[0;32m\xE2\x9C\x94\033[0m
 
-FUNC = ./map/copy_construct
+FUNC = ./map/erase2
 
 SRC = $(addsuffix .cpp, $(FUNC))
 OBJ = $(addsuffix .o, $(FUNC))
