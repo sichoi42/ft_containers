@@ -463,7 +463,7 @@ public:
     node_pointer parent = _find_post_parent(value, pos.base());
     if (parent != _end) {
       if (!_comp(parent->value, value) && !_comp(value, parent->value))
-        return iteartor(parent, _nil);
+        return iterator(parent, _nil);
     }
     return iterator(_insert_node(value, parent), _nil);
   }
