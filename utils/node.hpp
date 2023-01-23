@@ -12,6 +12,7 @@ enum Color { RED, BLACK };
 template <typename T> class Node {
   typedef T value_type;
 
+  public:
   value_type value;
   Node *left;
   Node *right;
@@ -19,6 +20,25 @@ template <typename T> class Node {
   Color color;
 
   Node() : parent(NULL), left(NULL), right(NULL), value(value_type()), color(BLACK) {}
+
+  Node(const value_type& value) : parent(NULL), left(NULL), right(NULL), value(value), color(BLACK) {}
+
+  Node(const Node& n) {
+    if (this != &n) {
+      value = n.value;
+      left = n.left;
+      right = n.right;
+      parent = n.parent;
+      color = n.color;
+    }
+  }
+
+  Node &operator=(const Node& n) {
+    if (this != &n) {
+      *this = n;
+    }
+    return *this;
+  }
 };
 
 // Non-member function for node

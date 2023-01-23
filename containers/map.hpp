@@ -65,7 +65,7 @@ public:
 private:
   ft::rbtree<value_type, key_type, value_compare, allocator_type> _tree;
   key_compare _key_comp;
-  const value_compare _value_comp;
+  value_compare _value_comp;
 
 public:
   // Constructor
@@ -118,8 +118,8 @@ public:
   }
 
   mapped_type &operator[](const key_type &key) {
-    ft::pair<iterator, bool> p = ft::make_pair(key, mapped_type());
-    return p->first;
+    ft::pair<iterator, bool> p = insert(ft::make_pair(key, mapped_type()));
+    return p.first->second;
   }
 
   // Iterators

@@ -54,7 +54,7 @@ private:
     _destroy_node(node);
   }
 
-  node_pointer _set_root(node_pointer x) {
+  void _set_root(node_pointer x) {
     _end->left = x;
     x->parent = _end;
   }
@@ -225,7 +225,7 @@ private:
   }
 
   node_pointer _insert_node(const value_type &value, node_pointer &parent) {
-    node_pointer new_node = new_node(value);
+    node_pointer new_node = _new_node(value);
     if (parent == _end) {
       _set_root(new_node);
     } else if (_comp(value, parent->value)) {
@@ -458,7 +458,7 @@ public:
       if (!_comp(parent->value, value) && !_comp(value, parent->value))
         return ft::make_pair(iterator(parent, _nil), false);
     }
-    return ft::make_pair(iterator(_insert_node(value, parent)), true);
+    return ft::make_pair(iterator(_insert_node(value, parent), _nil), true);
   }
 
   // 삽입에 성공하면 삽입된 요소의 iterator
