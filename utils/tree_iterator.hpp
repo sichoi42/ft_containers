@@ -64,6 +64,11 @@ public:
     return tmp;
   }
 
+  // operator for casting iterator to const_iterator
+  operator tree_iterator<const value_type, node_type>(void) const {
+    return tree_iterator<const value_type, node_type>(_cur, _nil);
+  }
+
   // relational operators
   template <typename T>
   bool operator==(const tree_iterator<T, node_type> &x) const {
