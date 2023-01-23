@@ -78,7 +78,9 @@ public:
       const key_compare &key_comp = key_compare(),
       const allocator_type &alloc = allocator_type(),
       typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = NULL)
-      : _key_comp(key_comp), _value_comp(key_comp), _tree(_value_comp, alloc) {}
+      : _key_comp(key_comp), _value_comp(key_comp), _tree(_value_comp, alloc) {
+        insert(first, last);
+      }
 
   // Copy Constructor
   map(const map &m) {

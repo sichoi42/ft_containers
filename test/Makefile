@@ -2,14 +2,14 @@ NAME			= simple_test
 
 CPP				= clang++
 CXXFLAGS	= -Wall -Wextra -std=c++98
-INC = -I ../containers -I ../implements -I ../utils -I ./vector/utils
+INC = -I ../containers -I ../implements -I ../utils -I ./vector/utils ./map/utils
 
 GREEN = \033[0;32m
 RED = \033[0;31m
 RESET = \033[0m
 CHECK = \033[0;32m\xE2\x9C\x94\033[0m
 
-FUNC = ./map/pair
+FUNC = ./map/copy_construct
 
 SRC = $(addsuffix .cpp, $(FUNC))
 OBJ = $(addsuffix .o, $(FUNC))
