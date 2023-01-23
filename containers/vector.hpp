@@ -10,7 +10,7 @@
 #include <stdexcept>
 
 namespace ft {
-template <typename T, typename Allocator = std::allocator<T>> class vector {
+template <typename T, typename Allocator = std::allocator<T> > class vector {
 public:
   typedef T value_type;
   typedef Allocator allocator_type;
