@@ -92,10 +92,10 @@ private:
       } else if (_comp(node->value, key)) {
         node = node->right;
       } else {
-        break;
+        return node;
       }
     }
-    return node;
+    return _end;
   }
 
   node_pointer _find_post_parent(const value_type &value,
@@ -365,7 +365,7 @@ private:
   }
 
   // 해당 키보다 크거나 같은 첫번째 요소를 반환
-  node_pointer _get_lower_bound(const key_type &key) {
+  node_pointer _get_lower_bound(const key_type &key) const {
     node_pointer node = _get_root();
     node_pointer target = _end;
     while (node != _nil) {
@@ -380,7 +380,7 @@ private:
   }
 
   // 해당 키보다 큰 첫번째 요소를 반환
-  node_pointer _get_upper_bound(const key_type &key) {
+  node_pointer _get_upper_bound(const key_type &key) const {
     node_pointer node = _get_root();
     node_pointer target = _end;
     while (node != _nil) {
@@ -489,7 +489,7 @@ public:
 
   size_type erase(const key_type &key) {
     node_pointer target = _search_tree(key);
-    if (target == _nil) {
+    if (target == _end) {
       return 0;
     }
     erase(iterator(target, _nil));
@@ -518,7 +518,7 @@ public:
 
   const_iterator find(const key_type &key) const {
     node_pointer node = _search_tree(key);
-    return iterator(node, _nil);
+    return const_iterator(node, _nil);
   }
 
   // 해당 키보다 크거나 같은 첫번째 요소의 iterator를 반환
@@ -549,6 +549,8 @@ public:
   // first로 const lower_bound, second로 const upper_bound를 반환
   ft::pair<const_iterator, const_iterator>
   equal_range(const key_type &key) const {
+    const_iterator lower = lower_bound(key);
+    const_iterator upper = upper_bound(key);
     return ft::make_pair(lower_bound(key), upper_bound(key));
   }
 };

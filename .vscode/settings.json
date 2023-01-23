@@ -75,6 +75,7 @@
     "utility": "cpp",
     "memory_resource": "cpp",
     "version": "cpp",
-    "__functional_03": "cpp"
+    "__functional_03": "cpp",
+    "__memory": "cpp"
   }
 }
