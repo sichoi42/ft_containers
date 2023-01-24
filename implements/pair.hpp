@@ -1,3 +1,6 @@
+#ifndef PAIR_HPP
+# define PAIR_HPP
+
 namespace ft {
 	template <typename T1, typename T2>
 	struct pair {
@@ -59,3 +62,5 @@ namespace ft {
 		return !(x < y);
 	}
 }
+
+#endif

@@ -14,7 +14,7 @@
 
 namespace ft {
 template <typename U, typename V, typename Compare = std::less<U>,
-          typename Allocator = std::allocator<ft::pair<const U, V>>>
+          typename Allocator = std::allocator<ft::pair<const U, V> > >
 class map {
 public:
   typedef U key_type;
@@ -53,13 +53,6 @@ public:
       return comp(x, y.first);
     };
   };
-
-  // typedef typename rbtree<value_type, key_type, value_compare,
-  //                         allocator_type>::iterator iterator;
-  // typedef typename rbtree<value_type, key_type, value_compare,
-  //                         allocator_type>::const_iterator const_iterator;
-  // typedef ft::reverse_iterator<iterator> reverse_iterator;
-  // typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
   typedef typename ft::rbtree<value_type, key_type, value_compare,
                               allocator_type>::iterator iterator;
