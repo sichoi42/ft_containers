@@ -14,7 +14,7 @@
 
 namespace ft {
 template <typename U, typename V, typename Compare = std::less<U>,
-          typename Allocator = std::allocator<ft::pair<const U, V> > >
+          typename Allocator = std::allocator<ft::pair<const U, V>>>
 class map {
 public:
   typedef U key_type;
@@ -105,6 +105,8 @@ public:
     }
     return *this;
   }
+
+  allocator_type get_allocator() const { return _tree.get_allocator(); }
 
   // Element access
   mapped_type &at(const key_type &key) {
