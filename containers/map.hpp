@@ -1,12 +1,12 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
+#include "../implements/enable_if.hpp"
 #include "../implements/equal.hpp"
+#include "../implements/is_integral.hpp"
 #include "../implements/lexicographical_compare.hpp"
 #include "../implements/pair.hpp"
 #include "../implements/reverse_iterator.hpp"
-#include "../implements/enable_if.hpp"
-#include "../implements/is_integral.hpp"
 #include "../utils/rbtree.hpp"
 #include <exception>
 #include <functional>
@@ -23,12 +23,16 @@ public:
   typedef std::size_t size_type;
   typedef std::ptrdiff_t difference_type;
   typedef Compare key_compare;
-  typedef Allocator allocator_type;
 
-  typedef typename allocator_type::pointer pointer;
-  typedef typename allocator_type::const_pointer const_pointer;
-  typedef typename allocator_type::reference reference;
-  typedef typename allocator_type::const_reference const_reference;
+  typedef Allocator allocator_type;
+  typedef typename allocator_type::template rebind<value_type>::other
+      type_allocator;
+  typedef std::allocator_traits<type_allocator> type_traits;
+
+  typedef typename type_traits::pointer pointer;
+  typedef typename type_traits::const_pointer const_pointer;
+  typedef value_type &reference;
+  typedef const value_type &const_reference;
 
   class value_compare
       : public std::binary_function<value_type, value_type, bool> {
@@ -57,8 +61,10 @@ public:
   // typedef ft::reverse_iterator<iterator> reverse_iterator;
   // typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  typedef typename ft::rbtree<value_type, key_type, value_compare, allocator_type>::iterator iterator;
-  typedef typename ft::rbtree<value_type, key_type, value_compare, allocator_type>::const_iterator const_iterator;
+  typedef typename ft::rbtree<value_type, key_type, value_compare,
+                              allocator_type>::iterator iterator;
+  typedef typename ft::rbtree<value_type, key_type, value_compare,
+                              allocator_type>::const_iterator const_iterator;
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -77,16 +83,15 @@ public:
   map(InputIterator first, InputIterator last,
       const key_compare &key_comp = key_compare(),
       const allocator_type &alloc = allocator_type(),
-      typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = NULL)
+      typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * =
+          NULL)
       : _key_comp(key_comp), _value_comp(key_comp), _tree(_value_comp, alloc) {
-        insert(first, last);
-      }
+    insert(first, last);
+  }
 
   // Copy Constructor
-  map(const map& m)
-    : _key_comp(m._key_comp),
-      _value_comp(m._value_comp),
-      _tree(m._tree) {}
+  map(const map &m)
+      : _key_comp(m._key_comp), _value_comp(m._value_comp), _tree(m._tree) {}
 
   // Destructor
   ~map() {}
@@ -171,7 +176,8 @@ public:
   template <typename InputIterator>
   void insert(
       InputIterator first, InputIterator last,
-      typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = NULL) {
+      typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * =
+          NULL) {
     return _tree.insert(first, last);
   }
 
