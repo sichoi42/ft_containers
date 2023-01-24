@@ -17,7 +17,8 @@ public:
   typedef node_type *node_pointer;
 
   typedef Allocator allocator_type;
-  typedef typename allocator_type::template rebind<node_type>::other node_allocator;
+  typedef
+      typename allocator_type::template rebind<node_type>::other node_allocator;
   typedef std::allocator_traits<node_allocator> node_traits;
 
   typedef tree_iterator<value_type, node_type> iterator;
@@ -406,16 +407,17 @@ public:
   }
 
   // Copy Constructor
-  rbtree(const rbtree &rb) : _size(size_type()), _comp(rb._comp), _alloc(rb._alloc) {
-      _nil = _new_node(value_type());
-      _nil->color = BLACK;
-      _end = _new_node(value_type());
-      _end->color = BLACK;
-      _begin = _end;
-      insert(rb.begin(), rb.end());
+  rbtree(const rbtree &rb)
+      : _size(size_type()), _comp(rb._comp), _alloc(rb._alloc) {
+    _nil = _new_node(value_type());
+    _nil->color = BLACK;
+    _end = _new_node(value_type());
+    _end->color = BLACK;
+    _begin = _end;
+    insert(rb.begin(), rb.end());
   }
 
-  rbtree &operator=(const rbtree &rb){
+  rbtree &operator=(const rbtree &rb) {
     if (this != &rb) {
       rbtree tmp(rb);
       swap(tmp);
@@ -441,7 +443,10 @@ public:
 
   size_type size() const { return _size; }
 
-  size_type max_size() const { return _alloc.max_size(); }
+  size_type max_size() const {
+    return std::min<size_type>(std::numeric_limits<size_type>::max(),
+                               node_traits::max_size(node_allocator()));
+  }
 
   // Modifiers
   void clear() { erase(begin(), end()); }
