@@ -431,6 +431,8 @@ public:
     _destroy_node(_nil);
   }
 
+  allocator_type get_allocator() const { return _alloc; }
+
   // Iterators
   iterator begin() { return iterator(_begin, _nil); }
   const_iterator begin() const { return const_iterator(_begin, _nil); }
