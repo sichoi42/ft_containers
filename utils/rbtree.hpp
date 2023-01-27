@@ -235,6 +235,7 @@ private:
       parent->right = new_node;
     }
     new_node->parent = parent;
+    _insert_fixup(new_node);
     // 최솟값이 들어온 경우 begin을 갱신한다.
     if (_begin == _end || _comp(new_node->value, _begin->value)) {
       _begin = new_node;
@@ -519,13 +520,15 @@ public:
   }
 
   iterator find(const key_type &key) {
-    node_pointer node = _search_tree(key);
-    return iterator(node, _nil);
+    // node_pointer node = _search_tree(key);
+    // return iterator(node, _nil);
+    return iterator(_search_tree(key), _nil);
   }
 
   const_iterator find(const key_type &key) const {
-    node_pointer node = _search_tree(key);
-    return const_iterator(node, _nil);
+    // node_pointer node = _search_tree(key);
+    // return const_iterator(node, _nil);
+    return const_iterator(_search_tree(key), _nil);
   }
 
   // 해당 키보다 크거나 같은 첫번째 요소의 iterator를 반환
