@@ -24,10 +24,10 @@ namespace ft {
 	struct is_integral<unsigned char> : public ft::true_type {};
 	template <>
 	struct is_integral<wchar_t> : public ft::true_type {};
-	template <>
-	struct is_integral<char16_t> : public ft::true_type {};
-	template <>
-	struct is_integral<char32_t> : public ft::true_type {};
+	// template <>
+	// struct is_integral<char16_t> : public ft::true_type {};
+	// template <>
+	// struct is_integral<char32_t> : public ft::true_type {};
 	template <>
 	struct is_integral<short> : public ft::true_type {};
 	template <>
@@ -40,10 +40,10 @@ namespace ft {
 	struct is_integral<long> : public ft::true_type {};
 	template <>
 	struct is_integral<unsigned long> : public ft::true_type {};
-	template <>
-	struct is_integral<long long> : public ft::true_type {};
-	template <>
-	struct is_integral<unsigned long long> : public ft::true_type {};
+	// template <>
+	// struct is_integral<long long> : public ft::true_type {};
+	// template <>
+	// struct is_integral<unsigned long long> : public ft::true_type {};
 }
 
 #endif
