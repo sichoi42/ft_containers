@@ -32,6 +32,33 @@ private:
   value_compare _comp;
   node_allocator _alloc;
 
+  #define BG_RED "\033[41m"
+  #define BG_BLACK "\033[40m"
+  #define BG_RESET "\033[0m"
+  void _print_helper(node_pointer root, std::string indent, bool last) {
+    if (root != _nil) {
+      std::cout << indent;
+      if (last) {
+        std::cout << "R----";
+        indent += "   ";
+      } else {
+        std::cout << "L----";
+        indent += "|  ";
+      }
+
+      // c가 RED인 경우 빨간색 배경으로 출력
+      if (root->color == RED) {
+        std::cout << BG_RED << root->value.first << "(" << root->color << ")" << BG_RESET
+                  << std::endl;
+      } else {
+        std::cout << BG_BLACK << root->value.first << "(" << root->color << ")" << BG_RESET
+                  << std::endl;
+      }
+      _print_helper(root->left, indent, false);
+      _print_helper(root->right, indent, true);
+    }
+  }
+
   node_pointer _new_node(const value_type &value) {
     node_pointer node = _alloc.allocate(1);
     _alloc.construct(node, value);
@@ -55,7 +82,7 @@ private:
     _destroy_node(node);
   }
 
-  void _set_root(node_pointer x) {
+  void _set_root(const node_pointer x) {
     _end->left = x;
     x->parent = _end;
   }
@@ -184,7 +211,7 @@ private:
     // new node의 부모의 색깔이 레드인 동안 반복한다.
     while (node->parent->color == RED) {
       node_pointer gp = node->parent->parent;
-      // 부모가 조부모의 오른쪽 자식인 경우
+      // 부모가 조부모의 왼쪽 자식인 경우
       if (node->parent == gp->left) {
         // Case 1: 부모의 형제 노드가 레드인 경우
         if (gp->right->color == RED) {
@@ -258,7 +285,7 @@ private:
       s->color = RED;
       // x의 부모가 red and black이거나 doubly black이면서 root노드인 경우
       // 블랙으로 바꾸면 상황 종료
-      if (x->parent->color == RED || x->parent == _get_root()) {
+      if (x->parent->color == RED || (x->parent->color == BLACK && x->parent == _get_root())) {
         x->parent->color = BLACK;
         x = _get_root();
       } else {
@@ -295,7 +322,7 @@ private:
       s->color = RED;
       // x의 부모가 red and black이거나 doubly black이면서 root노드인 경우
       // 블랙으로 바꾸면 상황 종료
-      if (x->parent->color == RED || x->parent == _get_root()) {
+      if (x->parent->color == RED || (x->parent->color == BLACK && x->parent == _get_root())) {
         x->parent->color = BLACK;
         x = _get_root();
       } else {
@@ -320,8 +347,7 @@ private:
 
   // Balancing RBTree after deletion
   void _delete_fixup(node_pointer x) {
-    node_pointer root = _get_root();
-    while (x != root && x->color == BLACK) {
+    while (x != _get_root() && x->color == BLACK) {
       if (x == x->parent->left) {
         _delete_fixup_left(x);
       } else {
@@ -485,6 +511,9 @@ public:
   }
 
   iterator erase(iterator pos) {
+    if (_size == 0) {
+      return iterator(_nil, _nil);
+    }
     iterator tmp(pos);
     ++tmp;
     if (pos == begin()) {
@@ -500,7 +529,14 @@ public:
     if (target == _end) {
       return 0;
     }
-    erase(iterator(target, _nil));
+    if (target == _begin) {
+      iterator tmp(target, _nil);
+      ++tmp;
+      _begin = tmp.base();
+    }
+    --_size;
+    _delete_node(target);
+    // erase(iterator(target, _nil));
     return 1;
   }
 
@@ -562,6 +598,13 @@ public:
     const_iterator lower = lower_bound(key);
     const_iterator upper = upper_bound(key);
     return ft::make_pair(lower_bound(key), upper_bound(key));
+  }
+
+  void print_tree() {
+    if (_get_root()) {
+      _print_helper(_get_root(), "", true);
+      std::cout << "========end of tree========" << std::endl;
+    }
   }
 };
 

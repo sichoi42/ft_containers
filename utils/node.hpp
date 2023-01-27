@@ -83,13 +83,12 @@ void print_helper(NodePtr root, std::string indent, bool last, NodePtr nil) {
       indent += "|  ";
     }
 
-    Color c = root->color ? RED : BLACK;
     // c가 RED인 경우 빨간색 배경으로 출력
-    if (c == RED) {
-      std::cout << BG_RED << root->value << "(" << c << ")" << BG_RESET
+    if (root->color == RED) {
+      std::cout << BG_RED << root->value << "(" << root->color << ")" << BG_RESET
                 << std::endl;
     } else {
-      std::cout << BG_BLACK << root->value << "(" << c << ")" << BG_RESET
+      std::cout << BG_BLACK << root->value << "(" << root->color << ")" << BG_RESET
                 << std::endl;
     }
     print_helper(root->left, indent, false);

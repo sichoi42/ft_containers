@@ -235,6 +235,8 @@ public:
 
   // return value comparison object
   value_compare value_comp() const { return _value_comp; }
+
+  ft::rbtree<value_type, key_type, value_compare, allocator_type> get_tree() const { return _tree; }
 };
 
 // Non-member function overloads
