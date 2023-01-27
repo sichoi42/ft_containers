@@ -32,32 +32,32 @@ private:
   value_compare _comp;
   node_allocator _alloc;
 
-  #define BG_RED "\033[41m"
-  #define BG_BLACK "\033[40m"
-  #define BG_RESET "\033[0m"
-  void _print_helper(node_pointer root, std::string indent, bool last) {
-    if (root != _nil) {
-      std::cout << indent;
-      if (last) {
-        std::cout << "R----";
-        indent += "   ";
-      } else {
-        std::cout << "L----";
-        indent += "|  ";
-      }
+  // #define BG_RED "\033[41m"
+  // #define BG_BLACK "\033[40m"
+  // #define BG_RESET "\033[0m"
+  // void _print_helper(node_pointer root, std::string indent, bool last) {
+  //   if (root != _nil) {
+  //     std::cout << indent;
+  //     if (last) {
+  //       std::cout << "R----";
+  //       indent += "   ";
+  //     } else {
+  //       std::cout << "L----";
+  //       indent += "|  ";
+  //     }
 
-      // c가 RED인 경우 빨간색 배경으로 출력
-      if (root->color == RED) {
-        std::cout << BG_RED << root->value.first << "(" << root->color << ")" << BG_RESET
-                  << std::endl;
-      } else {
-        std::cout << BG_BLACK << root->value.first << "(" << root->color << ")" << BG_RESET
-                  << std::endl;
-      }
-      _print_helper(root->left, indent, false);
-      _print_helper(root->right, indent, true);
-    }
-  }
+  //     // c가 RED인 경우 빨간색 배경으로 출력
+  //     if (root->color == RED) {
+  //       std::cout << BG_RED << root->value.first << "(" << root->color << ")" << BG_RESET
+  //                 << std::endl;
+  //     } else {
+  //       std::cout << BG_BLACK << root->value.first << "(" << root->color << ")" << BG_RESET
+  //                 << std::endl;
+  //     }
+  //     _print_helper(root->left, indent, false);
+  //     _print_helper(root->right, indent, true);
+  //   }
+  // }
 
   node_pointer _new_node(const value_type &value) {
     node_pointer node = _alloc.allocate(1);
@@ -536,7 +536,6 @@ public:
     }
     --_size;
     _delete_node(target);
-    // erase(iterator(target, _nil));
     return 1;
   }
 
@@ -556,14 +555,10 @@ public:
   }
 
   iterator find(const key_type &key) {
-    // node_pointer node = _search_tree(key);
-    // return iterator(node, _nil);
     return iterator(_search_tree(key), _nil);
   }
 
   const_iterator find(const key_type &key) const {
-    // node_pointer node = _search_tree(key);
-    // return const_iterator(node, _nil);
     return const_iterator(_search_tree(key), _nil);
   }
 
@@ -600,12 +595,12 @@ public:
     return ft::make_pair(lower_bound(key), upper_bound(key));
   }
 
-  void print_tree() {
-    if (_get_root()) {
-      _print_helper(_get_root(), "", true);
-      std::cout << "========end of tree========" << std::endl;
-    }
-  }
+  // void print_tree() {
+  //   if (_get_root()) {
+  //     _print_helper(_get_root(), "", true);
+  //     std::cout << "========end of tree========" << std::endl;
+  //   }
+  // }
 };
 
 } // namespace ft
