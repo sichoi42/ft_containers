@@ -76,6 +76,14 @@
     "memory_resource": "cpp",
     "version": "cpp",
     "__functional_03": "cpp",
-    "__memory": "cpp"
+    "__memory": "cpp",
+    "*.ipp": "cpp",
+    "filesystem": "cpp",
+    "csignal": "cpp",
+    "fstream": "cpp",
+    "iomanip": "cpp",
+    "numeric": "cpp",
+    "random": "cpp",
+    "__availability": "cpp"
   }
 }
