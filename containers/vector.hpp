@@ -34,13 +34,13 @@ private:
   pointer _data;
   allocator_type _alloc;
 
-  size_type _new_capacity(size_type new_capacity) const {
+  size_type _new_capacity(size_type hope_capacity) const {
     const size_type _max_size = max_size();
     const size_type _double_capacity = 2 * _capacity;
     if (_double_capacity >= _max_size) {
       return _max_size;
     }
-    return _double_capacity > new_capacity ? _double_capacity : new_capacity;
+    return _double_capacity > hope_capacity ? _double_capacity : hope_capacity;
   }
 
 public:
